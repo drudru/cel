@@ -1,0 +1,68 @@
+#!/Users/dru/cel/vm/cel
+"
+
+"
+
+{|
+
+	Type   <- 'Aqua Application'.
+    	Author <- 'Dru Nelson'.
+	Info   <- 'test of Math kit'.
+
+	Root <-
+	{|
+		Start: name   <+
+			{ 
+			   Kit import: 'Math'.
+
+
+			   'log of 1000 = ' print.
+			   (Math log: 1000) print.
+			   '\n\n' print.
+
+			   'log of 256 = ' print.
+			   (Math log: 256) print.
+			   '\n\n' print.
+
+			   'log of 5 = ' print.
+			   (Math log: 5) print.
+			   '\n\n' print.
+
+			   'log of 99999 = ' print.
+			   (Math log: 99999) print.
+			   '\n\n' print.
+
+
+			   '2 to the 16 = ' print.
+			   (Math number: 2 raisedTo: 16) print.
+			   '\n\n' print.
+
+
+			   'pi = ' print.
+			   Math pi print.
+			   '\n\n' print.
+
+
+			   'sine of 0 = ' print.
+			   (Math sine: 0) print.
+			   '\n\n' print.
+
+			   'sine of 90 deg = ' print.
+			   (Math sine: (Math degreesToRadians: 90)) print.
+			   '\n\n' print.
+
+			   'sine of 45 deg = ' print.
+			   (Math sine: (Math degreesToRadians: 45)) print.
+			   '\n\n' print.
+
+			   'sine of 270 deg = ' print.
+			   (Math sine: (Math degreesToRadians: 270)) print.
+			   '\n\n' print.
+
+			} 
+	|}
+
+|}
+
+
+

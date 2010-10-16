@@ -1,0 +1,45 @@
+#!/Users/dru/cel/vm/cel
+"
+Test9 Aqua Module
+
+"
+
+{|
+
+	Type   <- 'Aqua Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of float methods'.
+
+	Root <-
+	{|
+		t     <-> 0.
+		f     <-> 0.
+		
+		Start: name   <+
+			{ 
+
+				'this should print 1\n\n' print.
+				'\n\n' print.	
+
+				//'this shouldn't print 2\n\n' print.
+				//'\n\n' print.	
+
+				'this should print 3\n\n' print.
+				'\n\n' print.	
+
+//				'this shouldn't print 2\n\n' print.
+//				'\n\n' print.	
+
+
+				t: 100.
+				t: (t / 100).
+				't is : ' print. t print. '\n' print.
+
+			} 
+	|}
+
+|}
+
+
+

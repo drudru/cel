@@ -1,0 +1,78 @@
+Credits for other people and things I've used
+----------------------------------------------------
+
+The hash routines used are by  Bob Jenkins:
+---------
+lookupa.c, by Bob Jenkins, December 1996.  Same as lookup2.c
+You may use this code in any way you wish.  It has no warranty.
+Source is http://ourworld.compuserve.com/homepages/bob_jenkins/lookupa.c
+
+
+The malloc I used was originally the Doug Lea malloc. I had to drop it,
+though, since it wasn't flexible about it's internal strucures.
+Still, I mention it because it is a decent, but fairly static malloc and
+I think I did use some of the C macros from it.
+
+
+Berkeley/Freebsd - CSRG - I used some of their high quality code
+
+
+The ideas and structures are HEAVILY borrowed from the papers/books
+on:
+Self (which was influenced by Smalltalk-80, which was influenced by Lisp),
+Objective-C (which was influenced by Smalltalk, C,),
+Forth (the inner workings specifically)
+Newtonscript 
+
+
+
+OS's Used
+-----
+I originally began development of this OS on a Nextstep 3.2 Intel system.
+It then moved to a FreeBSD 2.2 system.
+Later on, I moved to Linux 2.0.36 for no particular reason and then to Linux 2.2.x
+I continue to use both Linux and FreeBSD.
+
+
+People
+----------
+
+Prototype based languages were pushed by Steve Dekorte, without which,
+I probably wouldn't have gone this way, this soon.
+
+The main people behind Self (whose shoulders I stood on) were:
+David Ungar, Randall Smith - and the whole Self team.
+
+Jecel Assumpcao Jr - he is probably 'the' driving force for prototypes and
+Self technologies. Hi also runs the Self Interest mailing list moderator, and is
+great help to many.
+
+Brian Swetland - great guy and fun to work with. He was the first to download
+Cel and play with it.
+
+Squeak - I used Squeak in 1998?. It was an inspiration.
+
+.. which leads to Smalltalk. THANKS to all the people who created and supported
+that project. (I did use Digitalk Smalltalk in 1990? on an educational discount)
+
+I was first introduced to Smalltalk by a Byte magazine issue with a big balloon 
+on it.
+
+Levine - Lex/Yacc O'Reilly Book and the compilers newsgroup was helpful, but
+I didn't use Lex or Yacc :-).
+
+
+Unix - thanks to all who have made Unix throughout the years.
+
+------------
+
+Libraries
+
+I use SleepyCat as a database library. It is the cleanest one I've
+used so far.
+
+I use glibc, it just happens to be on every box that I use.
+
+Boutell - You can link to his GD kit, I don't distribute it with the code, but
+it is an easy, simple package (ie. it's not GL).
+

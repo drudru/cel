@@ -1,0 +1,48 @@
+#!/Users/dru/cel/vm/cel
+"
+
+Cel Meta Test Program
+
+"
+
+{|
+	Type   <- 'Cel Application'.
+    	Author <- 'Dru Nelson'.
+    	What   <- 'Cel Meta Test Program'.
+
+	Root <-
+	{|
+
+		TestParent <- {|
+
+		   doIt <+ {
+		       (x = 6) ifTrue: {
+		          x: 7.
+		       }.
+		   }.
+
+		   value <+ {
+		      ' This should not happen\n' print.
+		   }.
+
+		|}.
+
+		Test <- {|
+
+		    x <-> 6.
+
+		|}.
+
+		Start: name   <+
+			{ | zilbar <-> { }. zork <-> ''. |
+
+				Test setSlot: 'parent' with: TestParent.
+
+				Test doIt.
+
+				Test print.
+				
+			} 
+	|}
+|}
+

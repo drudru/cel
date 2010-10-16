@@ -1,0 +1,92 @@
+{|
+	Type   <- 'Cel Application'.
+    	Author <- 'Dru Nelson'.
+    	What   <- 'Cel Setup Program'.
+
+	Root <-
+	{|
+
+		Start: name   <+
+			{ | fd <-> { }. zork <-> ''.
+			    i <-> 0.
+			    modules <-> {}.
+			    lines <-> 0. buff <-> 0.
+			    tmp <-> 0.
+			  |
+
+
+				// We need to do this the old fashioned way
+				buff: String clone.
+				tmp: String clone.
+				tmp setCapacity: 4096.
+
+				fd: (OS openForRead: '../kits/Setup').
+				{ (OS readFd: fd Into: tmp Size: 4096) > 0 } whileTrue: {
+					buff append: tmp.
+				}.
+				OS close: fd.
+
+				lines: (buff splitOn: '\n').
+				lines removeAt: (lines size - 1).
+
+				lines do: { | :l. items <-> 0. |
+					((l at: 0) = '#') ifFalse: {
+					  items: (l splitOn: ' ' atMostCount: 1).
+					  ((items size) = 1) ifTrue: {
+						items append: ''.
+					  }.
+					  modules setSlot: (items at: 0) with: (items at: 1).
+					}.
+				}.
+	
+				lines print.
+
+				fd: (OS openForWrite: '../kits/kitmake.make').
+				OS writeFd: fd From: '\nFILES='.
+				(modules slotNames) do: { | :n |
+					OS writeFd: fd From: n.
+					OS writeFd: fd From: '.o '.
+				}.
+				OS writeFd: fd From: '\n'.
+				OS close: fd.
+
+				fd: (OS openForWrite: '../vm/kitlibs.h').
+				OS writeFd: fd From: '\n{\n'.
+				(modules slotNames) do: { | :n |
+					OS writeFd: fd From: 'extern uint32 '.
+					OS writeFd: fd From: n.
+					OS writeFd: fd From: 'SL;\n'.
+				}.
+				OS writeFd: fd From: '\n\n'.
+				(modules slotNames) do: { | :n |
+					OS writeFd: fd From: 'objectSetSlot(tmpObj, (Atom) stringToAtom("'.
+					OS writeFd: fd From: n.
+					OS writeFd: fd From: '"), PROTO_ACTION_INTRINSIC, (uint32) &'.
+					OS writeFd: fd From: n.
+					OS writeFd: fd From: 'SL);\n'.
+				}.
+				OS writeFd: fd From: '\n}\n'.
+				OS close: fd.
+
+// We need to generate something like this
+//extern uint32 OSSL;
+//extern uint32 SocketSL;
+//
+//objectSetSlot(tmpObj, (Atom) stringToAtom("OS"), PROTO_ACTION_INTRINSIC, (uint32) &OSSL);
+//objectSetSlot(tmpObj, (Atom) stringToAtom("Socket"), PROTO_ACTION_INTRINSIC, (uint32) &SocketSL);
+
+
+				fd: (OS openForWrite: '../vm/kitlibs.make').
+				OS writeFd: fd From: '\nCLIBS += ../kits/libkits.a '.
+				(modules slotNames) do: { | :n |
+					OS writeFd: fd From: (modules getSlot: n).
+					OS writeFd: fd From: ' '.
+				}.
+				OS writeFd: fd From: '\n'.
+				OS close: fd.
+
+//CLIBS += ../kits/libkits.a -lws2_32
+
+			}
+	|}
+|}

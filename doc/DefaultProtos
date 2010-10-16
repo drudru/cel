@@ -1,0 +1,20 @@
+
+
+ Ok, 4/25/99 - here is the object hierarchy
+     6/12/99 - added true,false
+
+  
+ Lobby +- DefaultBehavior
+       |
+       +- Traits -+- Clobable -+- ObjectClass
+       |          |             
+       |          `- OddBalls -+- IntegerClass
+       |                       `- AtomClass
+       `- Globals -+- Object
+		   |
+		   +- OS
+		   |
+                   `- true,false
+
+  
+

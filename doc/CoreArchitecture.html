@@ -1,0 +1,337 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (X11; I; FreeBSD 3.4-RELEASE i386) [Netscape]">
+   <title>CoreArchitecture</title>
+</head>
+<body>
+<b>Core Language Architecture</b>
+<p>This is a prototype based object-oriented language. This means that
+the language is structured around a datastructure called a proto (in C:
+a structure, in Lisp: a frame, in Pascal: a record). This is a structure
+that has data items. Those data items are accessed by keys. These keys
+are strings. All of the data structures are 'called' when accessed. If
+the structure is a number, then the routine called is designed to return
+a number. Special: there should also be a way for a proto to override the
+action call and interpret it. All actions take parameters passed by value
+(you can even think of int's or string literals this way as well).
+<p><b>Terminology</b>
+<p>Proto: a prototype object
+<br>Slot:&nbsp;&nbsp;&nbsp;&nbsp; the single association of a unique key
+and it's contents
+<br>Method:&nbsp;&nbsp;&nbsp; A slot that activates user code
+<br>Soup:&nbsp;&nbsp;&nbsp; a group of objects in a persistant state (in
+SimpleData format)
+<p><b>History</b>
+<p>&lt;Need to make this a side story>The reason for this is mostly due
+to Steve Dekorte pushing his view. Originally, I have always been interested
+in programming. I learned BASIC. Then I learned Assembly. I missed out
+on Forth at this time and that held back my development. Then I learned
+Pascal. Then I learned C. At this point, I was interested in Objective-C
+and Smalltalk although those languages didn't "make it." I learned C++
+and Java just for survival purposes. At the same time, I became very interested
+in Nextstep and Objective-C (I remember reading Brad Cox's article in Byte
+magazine).I never learned Lua, but any ideas in it that were good were
+passed along by Steve. In the begining, I was just interested in doing
+a class based system. Towards the end, I found that the simplicity of a
+system like Self was just as powerful and much more dynamic (like Steve
+said) even though the performance hits were obvious. I was concerned with
+speed and efficiency, but towards the end I began to see that a proto system
+would be just plain neat and much more rapid for development.
+<p>This language has it's influences from Self and Smalltalk. Although,
+there is some heavy underground influence from Objective-C, Newtonscript,
+and Forth. After looking at all of the languages, I settled on modeling
+Bubl against Self, which is heavily derived from Smalltalk (which was influenced
+by even more languages, most notably lisp). The "patterns" or object systems
+will be heavily influenced from&nbsp; Nextstep and the Mac. There will
+also be some Windows and Unix influences. The most significant of those
+will be the Nextstep environment. I have never used Self and the only Smalltalk
+I used was Smalltalk/V and Squeak. I programmed in neither of those versions
+in any real sense.
+<p>While constructing this language, I had to relearn everything I took
+for granted in a language. There is a lot more going on underneath the
+hood than I had originally learned. Many old papers on prototype systems
+and Self were digested over and over.
+<p><b>Name</b>
+<p>The combinations for Bubl are broken down by the kind of architecture
+being used. 32 bit or 64 bit. Right now, we're using 32 bit.
+<p>The name of the language: originally I was going to call it something
+'self' like. Then I opted for bubl. Then I decided to use a name I had
+reserved for something else, Aqua. Finally, since Apple came out with that
+name, I'm choosing between Proto and SmallSelf and maybe Atom.
+<p><b>Grammar</b>
+<p>The grammar will essentially be the same as Self. The grammar is only
+neccessary for TEXT input. So, the grammar/text is really a way to describe
+the objects in the system (code and data). In other languages, they are
+much better at describing code. Note again, this is just for the text side
+of things. A visual environment can interact and build protos in their
+native form. If they needed to see the code for a method, they could easily
+ask a code object to describe itself and the decompiler could represent
+the code as text.
+<p>Essentially, an Aqua like module is described - a soup.
+<p>*NOTE* It will be important to be able to describe a module from this
+level so libraries and other special modules can be built. For example,
+it will be important to describe a library module so it's module information
+is set properly.
+<p>The key grammar, that we are mainly concerned with then is the grammer
+for the code slots.
+<p>Wherever there is a space, that is a WHITESPACE
+<br>WhiteSpace: '\n' SPACE TAB
+<p>Proto:&nbsp; '[' Objects Code ']'
+<br>Objects: '|'&nbsp; Param* Local* '|'
+<br>Param: ':'name
+<br>Local: name | LocalSet
+<br>LocalSet: name | initializedName | constantName | parentName
+<br>initializedName: name '&lt;-' Value
+<br>constantName: name '=' Value
+<br>parentName: name'*'
+<br>Code:
+<br>Value:
+<p>Initialized/Param: These create two slots, an 'x' and an 'x:'
+<br>Code creates a separate proto and a PASSTHRU slot (see implementation)
+<p>???? What about using parentheses ? - i need to finalize the grammar.
+<p><b>Types</b>
+<p>The basic types in the system will be Protos, Numbers, Strings, Opaque/Blob,
+Code objects, Object references, and Dates.
+<p>Protos: (| |)
+<br>Numbers: Signed 30 bit Integer&nbsp;&nbsp;&nbsp; Base'r'Number (Example:
+16rff0056, 2r1011101, 12345)
+<br>Strings:&nbsp; 'this is a string\'s string\n'
+<br>Dates: @YYY[MM[DD[HH:MM][SS.mm] ] ]&nbsp;&nbsp; //// What about timezone?
+What about just specifiying a time??
+<p><b>Special Names and Values</b>
+<p>nil, true, false, 1, -1, 0, ???? self
+<p><b>Modules</b>
+<p>There has to be a way to specify outside modules. It has to be done
+in a way that allows a 'program generator' to easily identify.
+<p>The idea I had so far was to have a prebuilt Global that would be called
+'Modules'. When that global had a slot accessed under it, Now, if
+<br>the slot already exists, the current mechanisms will work. Or we can
+have a 'forward:' or poseas or someother method that would allow a proto
+to examine the activation record and make a determination there. So when
+the module builds the slots for each Module, it can determine which slot
+name was called. Or it can set a variable and call a super.
+<br>&nbsp;
+<p><b>Namespace</b>
+<p>The namespace of a proto is a hierarchy. The 'self' proto is searched
+first for a string.&nbsp; If it isn't found, it starts going up it's parent
+chain. When it reaches a proto without a parent, then it is done. There
+is one exception to the rule, this is the Globals section. If something
+is refered to as Global Modules: SerialIO, then it searches the Globals
+OR if the search fails, it will look in the Globals proto. This is essential
+having a slot called "Globals" in every prototype. Without this, there
+would be no way to set parents to pre-built behaviors. That's all. Pretty
+simple, huh.
+<p>Then there is 'self' this refers tot he proto that made the call and
+created an activation record.
+<p><b>Exceptions</b>
+<p>Exceptions are a good idea. The basic idea is that errors are special.
+They can automatically pass up through the contexts to find an 'error handler'.
+These errors are called exceptions and those handler's are called exception
+handlers. The programmer isn't forced to use this mechanism, but just about
+every library will probably use it.
+<p>Exceptions will be objects, just like everything else. There won't be
+any special syntax either. There will be a method call to a special object
+that will do the necessary low level work.
+<p>At this point, I haven't thought about how I will implement this completely.
+<br>&nbsp;
+<p><b>Multiple-Return Values</b>
+<p>The system will need to be able to return multiple, varargs...
+<br>&nbsp;
+<p><b>The Virtual Machine</b>
+<p>The code in the proto-environment will run in a virtual machine. The
+first firtual machine we have implemented is the vm32 environment. It is
+a simple stack based VM. It doesn't have any speicial hooks for this environment,
+but that may change.
+<br>&nbsp;
+<p><b><font size=+2>Low Level Implementation</font></b>
+<p>The slots in a proto have three fields. Two are the only ones visible,
+but it is the third that makes things interesting. This is how Forth influences
+this language.&nbsp; In forth, each 'word' is a record in a 'dictionary'.
+The first three characters of the 'word' are stored there. After that,
+there is a link to the next word in the dictionary list, then there is
+a code pointer, and then there is data. The idea here is that when this
+word is executed, it is up to the user defined code to perform some action.
+The code gets a pointer to the data section for that word. In other languages,
+this is completely hidden or not in programmer control. Therefore, you
+can't do some of the things that forth can do. This is more OO in the sense
+that code manipulates that data, not you; and there is no difference in
+interface when manipulating data or activating code - it is all activating
+code. Some examples of the code in Forth are, variable retrieval (constants,
+and read write), code execution (the data portion is actual assembly),
+threaded-code execution (the data is an array of pointers to words in the
+dictionary). This is a powerful pattern and is something I decided to use
+in Bubl as well.
+<p>As stated earlier, Bubl uses slots with fields. You access the slot
+with the key string. This slot may be read/write data, read only data,
+or code. The other hidden field in the slot is set when the object is created
+and determines what kind of slot this is...
+<p>GET - Gets the value stored in type (usually a pointer)
+<br>SET - Sets the value portion of the slot
+<br>GETSTACK - The same, except the data holds the position relative to
+the stack frame
+<br>SETSTACK - The same, except the data holds the position relative to
+the stack frame
+<br>PASSTHRU - The data holds the address of the code proto it calls the
+proper value:value: or value: etc. method in the code proto
+<br>CODE - Execute the code stored in the 'CODE' slot in a code proto
+<br>&nbsp;
+<p><b>Storage</b>
+<p>Pointers will be to Ints, Proto's, Blobs, and Unique strings
+<p>&nbsp;&nbsp; Bit 00 - Ints (+- 500 million signed)
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 01 - Protos - (these
+are at least 4 bytes)
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10 - Blobs&nbsp; -
+(these are at least 4 bytes)
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 11 - Unique strings
+/ literals (each string is at least 2 bytes,
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+string + 0 byte terminator) so this address is shifted down,
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+by one, thereby elmiminating the top 2 Gig space)
+<p>&nbsp;&nbsp;&nbsp;&nbsp; When a module is linked in,&nbsp; the first
+thing that happens is that the string literals all get transformed into
+their 32 bit quantities.
+<p>Proto Hash tables. Hash tables will have a header (described in the
+malloc portion of this document).The proto hash tables will have a size
+in the header. Each row/slot will have the key and and the data portion.
+The key field will be a 32 bit value and it will require 29 of the 32 bits.
+The remaining three bits will be used to indicate which routine will be
+called for this proto. Now if our pointers use 30 bits, then we are 1 bit
+short. So, if we kept to this, limitation, we would have to keep strings
+in 8 byte alignment blocks. The reality of string literals in a system
+like this is that the strings will occupy 4 or more bytes, a lot of the
+time. So, with the zero terminator, the alignment of bytes is not a bad
+waste. What we will do is store the left shifted pointer for literals.
+So, we will make sure that the strings will not occupy the upper 2 GIG
+of a system's virtual address space. This will be easy to guarantee since
+the buffer for the copies of these strings will be in heap space. When
+we attempt to get the value of a literal, we will have to remember to shift
+it right once and mask out the type to access the value.
+<p>Each associate is 8 bytes - the minimum for malloc is 16 bytes...
+<p>Chaining vs. Not. Hash vs. Not.
+<p>Chaining: chaining requires that the associations can store pointers
+to the next entry in the hash table. This allows the hash table to grow
+without having to move the table around often. (reallocs). If a table gets
+realloc'd, the pointers to it must be changed.
+<p>When a slot is added, the key is applied with a hashing function, this
+then determines the position into the table.
+<p>Memory Types
+<p>Header in malloc chunks:
+<br>&nbsp;
+<pre>&nbsp;In Use</pre>
+
+<pre>&nbsp;&nbsp; bit 0 - 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Previous Free</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Previous in Use/Alloced</pre>
+
+<pre>&nbsp;&nbsp; GC</pre>
+
+<pre>&nbsp;&nbsp; Bit 1 - 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Non-GC</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GC</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Automatic (GC)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Manual</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ------------------------------------------</pre>
+
+<pre>&nbsp;&nbsp; Type</pre>
+
+<pre>&nbsp;&nbsp; Bit 2 - 0&nbsp;&nbsp;&nbsp; Blob/Alloc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Alloc</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp; Proto&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Small Alloc? Some other type?</pre>
+
+<pre>&nbsp;&nbsp; The Rest are only for GC objects</pre>
+
+<pre>&nbsp;&nbsp; Bit 3 - 0&nbsp;&nbsp;&nbsp; Not Marked&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Unused</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp; Marked&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Unused</pre>
+
+<pre>&nbsp;</pre>
+
+<pre>&nbsp;</pre>
+
+<pre>&nbsp;&nbsp; Bit 4 - 0&nbsp;&nbsp;&nbsp; Generation&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Unused</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp; Marked&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Unused</pre>
+
+<pre>&nbsp;&nbsp; Size&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Blob, Free - Easy -</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Blob (Size (only so many bits used, and it stands for 16 byte groups), Bytes),</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Free (Size (only so many bits used and it stands for 16 byte groups), PTRS, Footer)</pre>
+
+<pre>&nbsp;</pre>
+Also, must not forget 'forwarders' - a structure that points to a proto's
+actual location (due to a size increase). Once the garbage collector
+<br>hits a forwarder through two cycles, all references should be gone.
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<p><b>Code Protos</b>
+<p>Code protos are like any other proto, except they aren't created by
+the programmer directly. They are created indirectly when code is compiled.
+It was nice to treat blocks and code as the same thing and have the resulting
+objects respond to their proper 'value' message. They are special in that
+they have their 'self' and their 'parent' slots mapped differently. Their
+parent slot is stack mapped and their self points to their parent proto.
+<p><b>Code</b>
+<p>All code is in VM bytecode and is in position-independent code. When
+code or names are called for external routines there will be a small table
+that the code can position independent refer to.
+<br>&nbsp;
+<p><b>The String Literals</b>
+<p>All the protos need to be accessed by strings. Since doing string compares
+is expensive and accessing protos is a common thing most systems (Smalltalk
+or Self), usually have what is called a "String Literal". A string literal
+gets transformed into a number upon linking or compiling of a module. That
+is, a string is added to a global table. If it is in the table, that the
+origninal ID is used, otherwise it is added. All strings are unique and
+case sensitive. Now, when the Bubl runtime needs to compare strings, it
+can just compare these numbers.
+<p>Implementation. So, when strings are added, we need a quick way to determine
+if the string is in the global table (access path). Also, since strings
+will be added to the system when the system becomes linked, it is possible
+for this table to grow. That means that it is better if the strings stayed
+in place and the table of pointers just moved. So, we will need a hash
+table that will have an association of the hash of the string and a pointer
+to it's place in the pointer table. Or we could use the hash table as storage
+and when a string already exists, we use that value?? I think when I implement
+this, it will become clear as to how to do it best.
+<br>&nbsp;
+<p><b>The Activation Record</b>
+<p><a href="activation.html">Activation Record Documentation</a>
+<br>&nbsp;
+<p><b>Initial Bootstrap</b>
+<p>To initially get going. I will need to use Objective-C to build the
+compiler and assembler. I would like to build one using Bubl, but that
+just isn't possible. So the lexer,parser,compiler,assembler, and packager
+each take a specification of objects and use SD format between each step.
+The end result is a finished module. Once the proto environment can start
+reading files and generating files, it should be enhanced to do this process.
+<p><b>Intermediate Forms</b>
+<p>Once the code is typed in by the programmer for a Bubl soup (a program/application/whatever),
+the compilers need to make it in SimpleData format. The first step is to
+place as many of the standard types into that form as possible. This will
+leave the code sections undescribed. The next step is to pass this simple
+data module to the lexer/scanner. It will tokenize the code slots in the
+protos with code and return a resulting SimpleData module. This process
+continues until a finished module is produced. (Lexer/Scanner, Parser,
+Optimizer, Code Generator, Assembler)
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<p>7/8/98 - First creation, basically everything.
+<br>7/9/98 - Morning, a little work
+<br>7/10/98 - Morning, add a little about the types, grammar, and (32 bit)
+vs.(64 bit) transcription of notes. ?n
+<br>&nbsp;7/11/98 - Exceptions, Multiple return types
+<br>7/12/98 - Filled out exceptions some more., globals, and lots of low-level
+implementation details.
+<br>7/19/98 - Modified the storage section, put a better description of
+the string literal storing/processing.
+<br>7/10/99 - Moved activation record to it's own document
+<br>&nbsp;
+</body>
+</html>

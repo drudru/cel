@@ -1,0 +1,53 @@
+
+"
+
+Cel StringTest Program
+
+"
+
+{|
+	Type   <- 'Cel Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of strings'.
+
+	Root <-
+	{|
+		zoob <-> 'adios'.
+		zork <-> 'zork'.
+		bork <-> ''.
+
+		Start: name   <+
+			{ 
+				Kit import: 'Socket'.
+
+				zoob: Socket clone.
+
+				zoob connectToHost: 'www.dadgum.com' port: 80.
+
+				zork: String clone.
+				zork setCapacity: 4096.
+
+				zoob print.
+
+				"Send http request"
+				'Sent http request\n' print.
+				zoob writeFrom: 'GET /giantlist/ HTTP/1.0\r\n'.
+				zoob writeFrom: 'Host: www.dadgum.com\r\n'.
+				zoob writeFrom: '\r\n\r\n'.
+
+				'Reading http reply\n' print.
+				{ (zoob readInto: zork Size: 4096) > 0 } whileTrue: {
+				   zork print.
+                                }.
+
+				'Doing http close\n' print.
+				zoob close.
+
+			} 
+	|}
+
+|}
+
+
+

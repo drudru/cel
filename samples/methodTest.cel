@@ -1,0 +1,64 @@
+#!/Users/dru/cel/vm/cel
+"
+
+Cel Meta Test Program
+
+"
+
+{|
+	Type   <- 'Cel Application'.
+    	Author <- 'Dru Nelson'.
+    	What   <- 'Cel Meta Test Program'.
+
+	Root <-
+	{|
+		testObj <-> { |
+			holiday <-  'On the Moon'.
+			laralay <-  'Hollywood'.
+			traffic <-  '101'.
+			time    <-  [ '101' '280' '880' ].
+			Xerox   <-> 1980.
+			Parc    <-  'Place'.
+			Apple   <-> 2.
+			Akay.
+			Ungar.
+			Smith.
+		| }.
+
+		zap <+ {
+			'zap!!\n' print.
+		}.
+
+		kaplow: i <+ {
+			'kaplow...' print.
+			i print.
+			'!!\n' print.
+		}.
+
+
+		kaplow2: i with: j <+ {
+			'kaplow!!!' print.
+			i print.
+			'!!   & ' print.
+			j print.
+			'!!\n' print.
+		}.
+
+		= a <+ {
+		        'aalgool!!!' print.
+			a print.
+		}.
+		
+		Start: name   <+
+			{ | tmp <-> 0. obj <-> 0. |
+
+				tmp: (testObj slotNames).
+				tmp print.
+				'\n' print.
+
+
+				= 'zap'.
+
+			} 
+	|}
+|}

@@ -1,0 +1,8 @@
+# Modules Setup file
+# Uncomment a module to include it in the build
+Math
+Random
+Socket -lws2_32
+DateTime
+# GD
+# SleepyCat

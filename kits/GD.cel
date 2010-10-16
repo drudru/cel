@@ -1,0 +1,40 @@
+
+"
+Cel Module - GD Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'GD'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		GD <- {|
+
+			name <- 'GD'.
+
+			"Remember the origin is the upper left corner"
+
+                        font <- {|
+                                    FontTiny        <- 1.
+                                    FontSmall       <- 2.
+                                    FontMediumBold  <- 3.
+                                    FontLarge       <- 4.
+                                    FontGiant       <- 5.
+                                  |}.
+          	|}.
+
+		Start: name   <+
+			{ 
+				Kit importLib: GD.
+				(Globals) setSlot: 'GD' with: GD.
+				true.
+			} 
+	|}
+
+|}
+

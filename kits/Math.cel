@@ -1,0 +1,31 @@
+
+"
+Cel Module - Math Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'Math'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		Math <- {|
+
+			name <- 'Math'.
+
+		   |}.
+
+		Start: name   <+
+			{ 
+				Kit importLib: Math.
+				(Globals) setSlot: 'Math' with: Math.
+				true.
+			} 
+	|}
+
+|}
+

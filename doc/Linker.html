@@ -1,0 +1,43 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.61 [en] (X11; U; Linux 2.2.16 i686) [Netscape]">
+   <title>Linker</title>
+</head>
+<body>
+<b>Linker/Debugger Info</b>
+<br>&nbsp;
+<p>This section will describe how the linking occurs from a persistent
+stored representation of an Aqua module.
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<ul>In general, the module has to have linker information. This information,
+since it is already in SD form,&nbsp; will basically be in a form that
+most other linkers would eventually have to build.
+<p>The linker will have three sections. Labels, Unresolved, and Debugger
+info.
+<p>The labels will mention
+<br>&nbsp;
+<p>The debugger info is special. When a program is linked at run time,
+the linker will place all debugger sections in a global pool. This is so
+the VM can find the debugger info when an exception occurs. It will need
+to be able to identify a source module, a line #, and an address. Since
+the access path for this information that will be needed is via address,
+it will be sorted in address order. Also, since this could be a lot of
+information it will rely on the SD format's ability to point to unique
+strings.
+<br>&nbsp;</ul>
+<b>Goals</b>
+<br>&nbsp;
+<br>&nbsp;
+<p>7/8/98 - First creation based on info from 6/7/98
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>

@@ -1,0 +1,63 @@
+
+"
+
+Cel ArrayTest Program
+
+"
+
+{|
+	Type   <- 'Cel Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of arrays'.
+
+	Root <-
+	{|
+		buffer <-> ''.
+		pipe   <-> ''.
+		result <-> ''.
+
+		Start: name   <+
+			{ 
+				Kit import: 'PipeIO'.
+
+				buffer: String clone.
+				buffer setCapacity: 4096.
+
+				" test command output "
+				pipe: PipeIO clone.
+				pipe runCommand: '/bin/ls -al'.
+
+				{ (pipe readInto: buffer Size: 4096) > 0 } whileTrue: {
+					buffer print.
+				}.
+
+				pipe close.
+
+				" test command input "
+				pipe: PipeIO clone.
+				pipe runCommand: '/usr/sbin/sendmail -t'.
+
+				buffer: 'To: Cel <dru@redwoodsoft.com>\n' asString.
+				buffer append: 'From: Dru Nelson <dru@redwoodsoft.com>\n'.
+				buffer append: 'Subject: Those OTHER old pictures\n\n'.
+				buffer append: 'First email from a Cel program\n\n'.
+				buffer append: 'Dru Nelson\n'.
+				buffer append: 'San Mateo, California\n'.
+
+
+              			" I should check to see how much was written and remove that from the
+				  buffer "
+				pipe writeFrom: buffer.
+				result: pipe close.
+
+				'Result: ' print.
+				result print.
+				'\n' print.
+
+
+			} 
+	|}
+
+|}
+

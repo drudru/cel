@@ -1,0 +1,85 @@
+
+Hello!
+
+This is the 'Cel' language distribution.
+The best place to learn more is at the web site.
+http://www.redwoodsoft.com/cel
+BE sure to check out the Release Notes.
+
+*License*
+This entire package is covered by the license in
+the file 'License'.
+
+*Brief Intro*
+'Cel' is a fine example of a Prototype based, pure
+Object Oriented language.
+It is interpreted by a simple virtual machine and it
+has a syntax similar to the languages Self or Smalltalk.
+(NOTE, the syntax is on the horizon to change)
+At this point in time, it is more of an example, than
+a production environment (it lacks documentation, etc).
+However, I do use it for various tasks on my systems.
+The goal is to provide a good system to explore the
+prototype based programming model.
+
+
+*Platform Issues*
+This has been tested on Linux, Win32, and Mac OS X.
+
+WIN32
+Windows requires an environment in order to build.
+The environment is the Mingw/Msys environment.
+This is *extremely* easy to install and run, just
+download the tarballs and setup one PATH environment
+variable and you are good to go.
+
+
+*How To Build*
+The build is kind of archaic. (Old School) 
+
+UNIX/LINUX/MAC OS X
+
+0.  cd to the 'cel' directory
+1.  type '/bin/sh config.unix'
+2.  type './build.sh'
+
+
+WINDOWS 
+
+0.  cd to the 'cel' directory
+1.  type '/bin/sh config.win32'
+2.  type './build.sh'
+
+This should make all the files in all of the other directories.
+It builds in 2 phases. If all goes well, it will indicate that
+the Phase 2 build was good.
+
+You are done. There should be a file in the
+vm directory called 'cel'.
+
+You should then be able to run most of the samples.
+
+KIT BUILDING
+Unfortunately, the language doesn't build the kits on 
+the fly. (This will be fixed). You need to manually 
+build them with a script before use.
+This is simple, go into the kits directory and type './builder'.
+It just wraps the manual task
+of, for example, doing '../vm/cel Socket'. That
+will make the Socket.cel kit. Do that for each '*.cel' file. 
+
+Now if you go into the samples directory, there
+are some sample files. You can execute
+them by going '../vm/cel test8'. 
+
+
+
+*How To Contribute/Give Feedback*
+Feeback would be greatly appreciated
+On the web site there is a page for mailing lists
+and contact information.
+
+Dru Nelson
+dru-cel@redwoodsoft.com
+
+

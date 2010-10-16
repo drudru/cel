@@ -1,0 +1,66 @@
+
+"
+Cel Module - Random Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'Random'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		Random <- {|
+
+			name <- 'Random'.
+
+			" A simple method that uses a uniform 
+			  probability distribution to determine
+			  if event X will happen with a given
+			  probability rate: r
+			"
+			uniformProbability: r <+ {
+			   |
+			     i      <-> 0.
+			     j      <-> 0.
+			     result <-> 0.
+			   |
+
+			   i: (r asIntegerScaled: 1000).
+
+			   j: (integerBetween: 0 and: 1000).
+			   
+			   result: (j <= i).
+			   result.
+			}.
+
+
+			" the low and high are inclusive "
+			integerBetween: l and: h <+ {
+			   |
+			     a      <-> 0.
+			     result <-> 0.
+			   |
+
+			   a: Array new.
+
+			   a append: l. a append: h.
+			   result: (integerInRange: a).
+			   result.
+			}.
+
+		   |}.
+
+		Start: name   <+
+			{ 
+				Kit importLib: Random.
+				(Globals) setSlot: 'Random' with: Random.
+				true.
+			} 
+	|}
+
+|}
+

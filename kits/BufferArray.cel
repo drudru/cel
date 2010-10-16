@@ -1,0 +1,62 @@
+
+"
+Cel Module - Socket Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'Queue'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		BufferArrayParent <- {|
+
+			type <- 'BufferArray'.
+
+			init <+
+			 {
+			   array: Array new.
+			 }.
+
+			append: b <+
+			 {
+			   array append: b.
+			 }.
+
+			asString <+
+			 { |
+			     result <-> 0. size <-> 0.
+			   |
+			   size: 0.
+			   array do: { | :elem |
+			     size: (elem size) + size.
+			   }.
+			   result: String clone.
+			   result setCapacity: size.
+			   array do: { | :elem |
+			      result append: elem.
+			   }.
+			   result.
+			 }.
+
+			
+
+          	|}.
+		BufferArray <- {| array <-> -1. |}.
+
+		Start: name   <+
+			{ 
+                                BufferArrayParent setSlot: 'parent' with: (Traits Clonable ObjectClass).
+                                (Traits Clonable) setSlot: 'BufferArrayParent' with: BufferArrayParent.
+				(Globals) setSlot: 'BufferArray' with: BufferArray.
+
+	                        BufferArray setSlot: 'parent' with: BufferArrayParent.
+			} 
+	|}
+
+|}
+

@@ -1,0 +1,36 @@
+
+"
+Test6 Aqua Module
+
+"
+
+{|
+
+	Type   <- 'Aqua Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of imported module code'.
+
+	Root <-
+	{|
+		x <- 5.
+		z <-> 0.
+		_debugName_ <- 'test6 Root'.
+		Start: name   <+
+			{ 
+				Kit import: 'Point'.
+				z: Point clone.
+				'z class = ' print.
+				z className print.
+				z _debugName_: 'Test6 Point'.
+				'\n\n' print.
+				z objectShallowDump.
+				z print.
+				'\n\n' print.
+			} 
+	|}
+
+|}
+
+
+

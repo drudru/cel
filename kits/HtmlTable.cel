@@ -1,0 +1,88 @@
+
+"
+Cel Module - Html Table Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'HtmlTable'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		TableParent <- {|
+	  	   columns: c <+ {
+		      cols: c.
+		   }.
+
+		   init <+ {
+		      rows: Array new.
+		   }.
+
+	  	   addRow: row <+ {
+		      rows append: row.	
+		   }.
+
+		   asString <+ { | text <-> 0. flag <-> 0. |
+
+		      text: String clone.
+		      text setCapacity: 4096.
+
+		      text append: '<TABLE>\n'.
+
+		      text append: '<TR>\n'.
+		      cols do: { | :i |
+		        text append: '<TD BGCOLOR="#80808F">'.
+		      	text append: '<FONT COLOR="#FFFFFF"><B>'.
+		      	text append: (i asString).
+		      	text append: '</B></FONT>'.
+		        text append: '</TD>\n'.
+                      }.
+		      text append: '</TR>\n'.
+
+		      flag: false.
+		      rows do: { | :i. |
+		        text append: '<TR>\n'.
+			i do: { | :j | 
+			   (flag) ifTrue: {
+"#D8D8D8 - Light Gray"
+				text append: '<TD BGCOLOR="#FFFFAA">'.
+			   } ifFalse: {
+				text append: '<TD>'.
+			   }.
+			   ((j asString) = '') ifTrue: {
+				text append: '&nbsp;'.
+			   } ifFalse: {
+				text append: (j asString).
+			   }.
+		           text append: '</TD>\n'.
+			}.
+		        text append: '</TR>\n'.
+			(flag) ifTrue: {
+				flag: false.
+			} ifFalse: {
+				flag: true.
+			}.
+                      }.
+
+		      text append: '</TABLE>\n'.
+
+		      text.
+		   }.
+
+		|}.
+		Table <- {| cols <-> ''. rows <-> ''. |}.
+
+		Start: name   <+
+			{ 
+				(Globals Html) setSlot: 'Table' with: Table.
+
+				TableParent setSlot: 'parent' with: (Traits Clonable ObjectClass).
+				Table setSlot: 'parent' with: TableParent.
+			} 
+	|}
+|}
+

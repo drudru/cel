@@ -1,0 +1,39 @@
+#!/Users/dru/cel/vm/cel
+"
+
+Cel CapsuleTest Program
+
+"
+
+{|
+	Type   <- 'Cel Application'.
+    	Author <- 'Dru Nelson'.
+
+	Root <-
+	{|
+		Start: name   <+
+			{ 
+			  | slots <-> 0. tmpStr <-> 0. |
+				Capsule arguments print. '\n' print.
+
+				Capsule environment print. '\n' print.
+
+				(Capsule environment slotNames) print.
+
+				(Capsule environment slotNames) do: {
+				  | :slot. tmp <-> 0. |
+
+				  tmp: String clone.
+				  tmp append: slot.
+				  tmp append: ' = '.
+				  tmp append: ((Capsule environment getSlot: slot) asString).
+				  tmp append: '\n'. 
+				  tmp print.
+				}.
+			} 
+	|}
+
+|}
+
+
+

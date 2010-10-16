@@ -1,0 +1,135 @@
+
+"
+Cel Module - HTTPClient Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'HTTPClient'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		HTTPClient <- {|
+
+			name <- 'HTTPClient'.
+
+			userAgent <- 'Cel (HTTPClient)'.
+			otherUserAgents <- [
+						'Cel (Apple ][; Prodos; wdc6502)'
+						'Cel (NeXT; NeXTStep; m68030)'
+						'Cel (Radio Shack; OS9; m6809)'
+						'Cel (X11; I; SunOS 4.1.4 sun3m)'
+						'Cel (Atari; 2600; m6507)'
+			 		].
+
+			openUrl: url <+ { | protocol <-> 0.
+			                    host     <-> 0. 
+			                    port     <-> 0. 
+			                    path     <-> 0. 
+			                    sock     <-> 0. 
+			                    page     <-> 0. 
+			                    buff     <-> 0. 
+			                    request  <-> 0. 
+			                    header   <-> 0. 
+			                    result   <-> { | resultCode <-> 600 | }. 
+			                    tmp      <-> 0. 
+					  |
+
+				" Parse the URL RFC-1738 "
+				tmp: (url splitOn: '//').
+				
+				protocol: (tmp at: 0).
+
+				tmp: ((tmp at: 1) splitOn: '/' atMostCount: 1).
+
+				host: (tmp at: 0).
+				path: (tmp at: 1 otherwiseUse: '').
+				path insert: '/' at: 0.
+
+				tmp: (host splitOn: ':').
+				host: (tmp at: 0).
+				port: (tmp at: 1 otherwiseUse: '').
+				(port = '') ifTrue: {
+					port: 80.
+				} ifFalse: {
+					port: port asInteger.
+				}.
+
+
+				" Request the page "
+
+				sock: Socket clone.
+
+				sock connectToHost: (host) port: (port).
+
+				"Send http request"
+				request: String clone.
+				request append: 'GET '.
+				request append: path.
+				request append: ' HTTP/1.0\r\n'.
+				request append: 'User-Agent: '.
+				request append: userAgent.
+				request append: '\r\n'.
+				request append: 'Host: '.
+				request append: host.
+				request append: '\r\n'.
+
+				request append: '\r\n'.
+				sock writeFrom: request.
+
+
+				" Get the actual page back "
+				buff: String clone.
+				buff setCapacity: 4096.
+
+				page: BufferArray clone.
+				page init.
+
+				{ (sock readInto: buff Size: 4096) > 0 } whileTrue: {
+				   page append: buff.
+
+				   // Now create a new buff to copy into
+				   buff: String clone.
+				   buff setCapacity: 4096.
+                                }.
+
+				sock close.
+
+				tmp: ( (page asString) splitOn: '\r\n\r\n' atMostCount: 1).
+				((tmp size) < 2) ifTrue: {
+				   tmp: ( (page asString) splitOn: '\r\n\n' atMostCount: 1).
+				}.
+
+				"Set the result code"
+				result setSlot: 'header' with: (tmp at: 0).
+				result setSlot: 'body' with: (tmp at: 1).
+
+				tmp: (result header splitOn: '\r\n' atMostCount: 1).
+				tmp: ((tmp at: 0) splitOn: ' ' atMostCount: 2).
+
+				result resultCode: (( tmp at: 1 ) asInteger).
+
+				result.
+			}.
+
+          	|}.
+
+		Start: name   <+
+			{ 
+				Kit import: 'Socket'.
+				Kit import: 'BufferArray'.
+
+                                HTTPClient setSlot: 'parent' with: (Traits Clonable ObjectClass).
+				(Globals) setSlot: 'HTTPClient' with: HTTPClient.
+
+				true.
+			} 
+	|}
+|}
+
+
+

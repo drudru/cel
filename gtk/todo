@@ -1,0 +1,23 @@
++ Need to fix object Dump to clear the TextEntry box
++ Need to get the window to auto scroll for a 'Step'
+- Need to get Dump to output one extra newline
++ Need to get that 'button pressed' message turned off
+
++ Need to display the register set
+
++ Need to get the stack display going
+  Goals show fp, sp and what they are pointing at in
+  order to debug these issues. For now, a simple display of
+  the stack +2 addresses past the SP
+
+
+
+3/18/00
++ Need to add object information (Integer, string, Proto, etc.)
+- Need to add display of stack frame info (self, frame, argcount, 
+  local vars, etc. )
+  
+4/18/00
+- Need to prevent exit from 'exiting' so we can see error output
+- Need to set breakpoints and trace to them...
+

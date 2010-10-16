@@ -1,0 +1,163 @@
+#!/Users/dru/cel/vm/cel
+"
+
+Cel StringTest Program
+
+"
+
+{|
+	Type   <- 'Cel Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of strings'.
+
+	Root <-
+	{|
+		zoob <-> 'adios'.
+		zork <-> 'zork'.
+		bork <-> ''.
+
+		Start: name   <+
+			{ 
+				zoob: String clone.
+				
+				zoob print.
+				'\n' print.
+				zoob size print. 
+				'\n' print.
+				zoob capacity print. 
+				'\n' print.
+
+				zoob: zoob + 'Dru'.
+
+				zork: 'This will become a string.' asString.
+
+				zork print.
+				'\n' print.
+				zork size print. 
+				'\n' print.
+
+				bork: zoob + zork.
+				bork print.
+				'\n' print.
+
+				bork append: 'Dog'.
+				bork print.
+				'\n' print.
+
+				zork reverse.
+				zork print.
+				'\n' print.
+
+				zork lowerCase.
+				zork print.
+				'\n' print.
+
+				'find "gni" in above ' print.
+				bork: (zork findLast: 'gni').
+				bork print.
+				'\n' print.
+
+				zork: 'http://www.redwoodsoft.com/cel' asString.
+				(zork splitOn: '//') print.
+				'\n' print.
+				(zork splitOn: '/') print.
+				'\n' print.
+				(zork splitOn: '/' atMostCount: 1) print.
+				'\n' print.
+				(zork splitOn: '/' atMostCount: 0) print.
+				'\n' print.
+				(zork splitOn: 'D' atMostCount: 1) print.
+				'\n' print.
+				(zork splitOn: 'D') print.
+				'\n' print.
+
+				zork: 'Date: Today\r\nType: Object\r\n' asString.
+				(zork splitOn: '\r\n' atMostCount: 1) print.
+				'\n' print.
+				
+				zork: 'q=%22this+and+that%22' asString.
+				zork print.  '\n' print.
+				zork urlUnEscape.
+				zork print.  '\n' print.
+				zork size print.  '\n' print.
+
+				zork: 'q=%3Athis+and+that%3a' asString.
+				zork print.  '\n' print.
+				zork urlUnEscape.
+				zork print.  '\n' print.
+				zork size print.  '\n' print.
+
+				zork: 'q="this and that"'.
+				zork print.  '\n' print.
+				zork size print.  '\n' print.
+				
+
+				'Test of Comparision Methods\n' print.
+				zork: 'ABC123' asString.
+				zoob: 'abc123' asString.
+				zork print.  ' = ' print. zoob print. 
+				' is ' print. (zork = zoob) print. '\n' print.
+				zork print.  ' > ' print. zoob print. 
+				' is ' print. (zork > zoob) print. '\n' print.
+				zork print.  ' < ' print. zoob print. 
+				' is ' print. (zork < zoob) print. '\n' print.
+
+				zork: 'abc' asString.
+				zoob: 'abc123' asString.
+				zork print.  ' = ' print. zoob print. 
+				' is ' print. (zork = zoob) print. '\n' print.
+				zork print.  ' > ' print. zoob print. 
+				' is ' print. (zork > zoob) print. '\n' print.
+				zork print.  ' < ' print. zoob print. 
+				' is ' print. (zork < zoob) print. '\n' print.
+
+				zoob: 'abc' asString.
+				zork print.  ' = ' print. zoob print. 
+				' is ' print. (zork = zoob) print. '\n' print.
+				zork print.  ' > ' print. zoob print. 
+				' is ' print. (zork > zoob) print. '\n' print.
+				zork print.  ' < ' print. zoob print. 
+				' is ' print. (zork < zoob) print. '\n' print.
+
+				zork print.  ' >= ' print. zoob print. 
+				' is ' print. (zork >= zoob) print. '\n' print.
+				zork print.  ' <= ' print. zoob print. 
+				' is ' print. (zork <= zoob) print. '\n' print.
+				
+				zoob: 'abc'.
+				zork print.  ' = ' print. zoob print. 
+				' is ' print. (zork = zoob) print. '\n' print.
+				zork print.  ' > ' print. zoob print. 
+				' is ' print. (zork > zoob) print. '\n' print.
+				zork print.  ' < ' print. zoob print. 
+				' is ' print. (zork < zoob) print. '\n' print.
+
+				zork print.  ' >= ' print. zoob print. 
+				' is ' print. (zork >= zoob) print. '\n' print.
+				zork print.  ' <= ' print. zoob print. 
+				' is ' print. (zork <= zoob) print. '\n' print.
+
+				zoob: ' bc'.
+				zork print.  ' = ' print. zoob print. 
+				' is ' print. (zork = zoob) print. '\n' print.
+				zork print.  ' > ' print. zoob print. 
+				' is ' print. (zork > zoob) print. '\n' print.
+				zork print.  ' < ' print. zoob print. 
+				' is ' print. (zork < zoob) print. '\n' print.
+
+				zork print.  ' >= ' print. zoob print. 
+				' is ' print. (zork >= zoob) print. '\n' print.
+				zork print.  ' <= ' print. zoob print. 
+				' is ' print. (zork <= zoob) print. '\n' print.
+
+				zork: 'xyz' asString.
+				zork removeAt: 0.
+				zork print. '\n' print.
+			} 
+	|}
+
+|}
+
+
+

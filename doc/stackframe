@@ -1,0 +1,79 @@
+
+
+*** THIS IS ALL OUT OF DATE ___ SEE THE ACTIVATION.HTML ***
+
+     
+As seen for an intrinsic or GET/SET from the VMReturn point of
+view
+All of the entries are 32 bit
+
+      x  Arg x
+      .   ...
+      5  Arg 0
+      4  Mesg
+      3  Target
+      2  Arg Count
+SP->  1  PC
+
+
+From a stackAt point of view
+      x  Arg x
+      .   ...
+      5  Arg 0
+      4  Mesg
+      3  Target
+      2  Arg Count
+      1  PC
+SP->  0  ??
+
+
+
+
+  Ok, as seen from a Call intstruction, here is the stack..
+
+      x  Arg x
+      5   ...
+      4  Arg 0
+      3  Mesg
+      2  Target
+      2  Argument Count
+      1  PC (of instruction after Call's operand)
+SP->
+
+
+  Ok, as seen from an intstruction in a code segment, here is the stack..
+  (after the code executed a 'setupFrame n')
+
+      x  Arg x
+      .   ...
+      8  Arg 0
+      7  Mesg
+      6  Target
+      5  Argument Count
+      4  PC (of instruction after Call's operand) [Pushed by Call instruction]
+      3  Parent Local (what the parent is) [Pushed by runtime]
+      2  Code-Proto Pointer (the proto that holds _code_ and the locals,
+         what block context would use as a parent) [Pushed by Code]
+      1  Preserved FP
+FP->  0  locals               [The FP is what the SP was, SP preservation]
+      .  ...
+      n  locals
+SP->
+
+  Ok, as seen from the first intstruction in a code segment,
+  before any setupFrame, etc. has run...
+
+      x  Preserved FP
+FP->  x  locals
+      x  Arg x
+      .   ...
+      6  Arg 0
+      5  Mesg
+      4  Target
+      3  Argument Count
+      2  PC (of instruction after Call's operand)
+      1  Parent Local (what the parent is)
+SP->
+
+   What a nice and hefty
+

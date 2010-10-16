@@ -1,0 +1,64 @@
+#!/Users/dru/cel/vm/cel
+"
+Test10 Aqua Module
+
+"
+
+{|
+
+	Type   <- 'Aqua Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of wrapper methods'.
+
+	Root <-
+	{|
+		x <-> 5.
+		d <-> 0.
+		z <-> 0.
+		childPid <-> 0.
+		status <-> 0.
+		_debugName_ <- 'test10 Root'.
+		Start: name   <+
+			{ 
+                                " Use the OS kit "
+				Kit import: 'OS'.
+
+				childPid: OS fork.
+
+				(childPid = 0) ifTrue: {
+					'I\'m the child\n' print.
+				} ifFalse: {
+					'I\'m the parent.\n' print.
+					'Doing the wait.\n' print.
+					status: OS wait.
+					'Status: ' print.
+					status print. '\n\n' print.
+				}.
+
+				'Pid: ' print.
+				OS getProcessId print. 
+				'\n' print.
+
+				OS getUname objectDump.
+				'\n' print.
+
+				OS getHostname objectDump.
+				'\n' print.
+
+				OS getCurrentDir print.
+				'\n' print.
+
+				'Directory Listing:\n' print.
+				(OS listDirectory: '.') print.
+				'\n' print.
+
+				OS sleep: 4.
+				OS exit: 5.
+			} 
+	|}
+
+|}
+
+
+

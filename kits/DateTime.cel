@@ -1,0 +1,173 @@
+
+"
+Cel Module - DateTime Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'DateTime'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		DateTime <- {|
+
+			name <- 'DateTime'.
+
+			dayNames <- [ 'Sunday' 'Monday' 'Tuesday' 'Wednesday'
+			                'Thursday' 'Friday' 'Saturday'].
+			monthNames <- [ 'January' 'February' 'March' 'April' 'May' 'June'
+					  'July' 'August' 'September' 'October' 'November' 'December' ].
+
+			monthAbbrevNames <- { |
+					jan <- 1.
+					feb <- 2.
+					mar <- 3.
+					apr <- 4.
+					may <- 5.
+					jun <- 6.
+					jul <- 7.
+					aug <- 8.
+					sep <- 9.
+					oct <- 10.
+					nov <- 11.
+					dec <- 12.
+				| }.
+			secondsInDay <- 86400.
+
+			asString <+ { | result <-> 0. |
+
+					result: String clone.
+
+					result append: year asString.
+					result append: '-'. 
+					result append: (month asStringWithFormat: '02').
+					result append: '-'. 
+					result append: (day asStringWithFormat: '02').
+					result append: ' '. 
+					result append: (hours asStringWithFormat: '02').
+					result append: ':'. 
+					result append: (minutes asStringWithFormat: '02').
+					result append: ':'. 
+					result append: (seconds asStringWithFormat: '02').
+
+					result.
+					
+				}.
+
+			asDateString <+ { | result <-> 0. |
+
+					result: String clone.
+
+					result append: year asString.
+					result append: '-'. 
+					result append: (month asStringWithFormat: '02').
+					result append: '-'. 
+					result append: (day asStringWithFormat: '02').
+
+					result.
+					
+				}.
+
+
+			tomorrow <+ { | result <-> 0. |
+
+					result: DateTime today.
+
+					result addDays: 1.
+
+					result.
+					
+				}.
+
+			nextMonth <+ { | result <-> 0. |
+
+					result: DateTime thisMonth.
+
+					result addMonths: 1.
+
+					result.
+					
+				}.
+
+			fromString: str <+ { | result <-> 0.
+					 tmp <-> 0. date <-> 0. time <-> 0.
+					 year <-> 0. month <-> 0. day <-> 0.
+					 hours <-> 0. minutes <-> 0. seconds <-> 0. |
+
+					tmp: (str splitOn: ' ').
+
+					date: ((tmp at: 0) splitOn: '-').
+
+					year: (date at: 0) asInteger.
+					month: (date at: 1) asInteger.
+					day: (date at: 2) asInteger.
+
+					(tmp size > 1) ifTrue: {
+						time: ((tmp at: 1) splitOn: ':').
+
+						hours: (time at: 0) asInteger.
+						minutes: (time at: 1) asInteger.
+						(time size > 2) ifTrue: {
+						   seconds: (time at: 2) asInteger.
+						}.
+					}.
+
+					" Cause the system to do the calculations
+					  based on the existing data to the time_t
+					  data internally.
+					"
+					result: (DateTime fromYear: year Month: month
+							Day: day Hours: hours
+							Minutes: minutes Seconds: seconds).
+
+					result.
+				}.
+
+			" This handles DD-MMM-YY or DD-MMM-YYYY "
+			fromDMYString: str <+ { | result <-> 0.
+					 tmp <-> 0. date <-> 0. time <-> 0.
+					 year <-> 0. month <-> 0. day <-> 0.
+					 hours <-> 0. minutes <-> 0. seconds <-> 0. |
+
+					date: (str splitOn: '-').
+
+					day: (date at: 0) asInteger.
+					month: (date at: 1).
+					year: (date at: 2) asInteger.
+
+					((date at: 2) size < 4) ifTrue: {
+					    year: year + 2000.
+					}.
+
+					month: month lowerCase.
+
+					month: (monthAbbrevNames getSlot: month).
+
+					" Cause the system to do the calculations
+					  based on the existing data to the time_t
+					  data internally.
+					"
+					result: (DateTime fromYear: year Month: month
+							Day: day Hours: hours
+							Minutes: minutes Seconds: seconds).
+
+					result.
+				}.
+
+
+          	|}.
+
+		Start: name   <+
+			{ 
+				Kit importLib: DateTime.
+                                DateTime setSlot: 'parent' with: (Traits Clonable ObjectClass).
+				(Globals) setSlot: 'DateTime' with: DateTime.
+			} 
+	|}
+
+|}
+

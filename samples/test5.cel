@@ -1,0 +1,39 @@
+
+"
+Test5 Aqua Module
+
+"
+
+{|
+
+	Type   <- 'Aqua Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of module importing'.
+
+	Root <-
+	{|
+		x <- 5.
+		z <-> 0.
+                _debugName_ <- 'test5 Root'.
+		Start: name   <+
+			{ 
+				" objectDump. "
+				Kit import: 'Point'.
+				'z class = ' print.
+				z className print.
+				'\n\n' print.
+				z: Point clone.
+				'x class = ' print.
+				x className print.
+				'\n\n' print.
+				'z class = ' print.
+				z className print.
+				'\n\n' print.
+			} 
+	|}
+
+|}
+
+
+

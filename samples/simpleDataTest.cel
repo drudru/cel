@@ -1,0 +1,39 @@
+#!/Users/dru/cel/vm/cel
+"
+
+Cel ArrayTest Program
+
+"
+
+{|
+	Type   <- 'Cel Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of arrays'.
+
+	Root <-
+	{|
+		config <-> ''.
+
+		Start: name   <+
+			{ 
+				config: (SimpleDataFactory getFromFile: 'sdTest.config').
+                                (config isNil) ifTrue: { OS exit: 1. }.
+
+				config print.
+				config count: (config count) + 1.
+
+				config saveToFile: 'sdTest.config'.
+
+				config: (SimpleDataFactory getFromFile: 'sdTest.config').
+                                (config isNil) ifTrue: { OS exit: 1. }.
+
+				config print.
+
+			} 
+	|}
+
+|}
+
+
+

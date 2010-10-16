@@ -1,0 +1,60 @@
+
+"
+Cel Module - Html Url Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'HtmlUrl'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		UrlParent <- {|
+
+		   asString <+ { | text <-> 0. flag <-> 0. |
+		      text: String clone.
+		      text setCapacity: 80.
+
+		      text append: '<A HREF="'.
+		      text append: (url asString urlEscape).
+		      text append: '">'.
+		      (bold = 1) ifTrue: {
+		 	text append: '<B>'.
+		        text append: title.
+		 	text append: '</B>'.
+		      } ifFalse: {
+		        text append: title.
+		      }.
+
+		      (image = '') ifFalse: {
+		 	text append: '<IMG SRC="'.
+		        text append: image.
+		 	text append: '" BORDER=0>'.
+		      }.
+
+		      text append: '</A>\n'.
+
+		      text.
+		   }.
+
+		   setBold <+ {
+			bold: 1.
+		   }.
+
+		|}.
+		Url <- {| title <-> ''. url <-> ''. image <-> ''. bold <-> 0. |}.
+
+		Start: name   <+
+			{ 
+				(Globals Html) setSlot: 'Url' with: Url.
+
+				UrlParent setSlot: 'parent' with: (Traits Clonable ObjectClass).
+				Url setSlot: 'parent' with: UrlParent.
+			} 
+	|}
+|}
+

@@ -1,0 +1,31 @@
+
+"
+
+Cel ArrayTest Program
+
+"
+
+{|
+	Type   <- 'Cel Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of arrays'.
+
+	Root <-
+	{|
+		config <- {| data <- 'mydata'. count <-> 5. |}.
+
+		Start: name   <+
+			{ 
+				config setSlot: 'parent' with: SimpleDataFactory.
+				config setSlot: 'testString' with: ('testing of the string system' asString).
+				config saveToFile: 'sdTest.config'.
+				config print.
+
+			} 
+	|}
+
+|}
+
+
+

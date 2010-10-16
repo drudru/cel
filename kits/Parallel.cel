@@ -1,0 +1,26 @@
+
+"
+Cel Module - Parallel Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'Parallel'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		Html <- {| buzz. |}.
+
+		Start: name   <+
+			{ 
+				(Globals) setSlot: 'Parallel' with: Html.
+
+				Kit import: 'ParallelProcess'.
+			} 
+	|}
+|}
+

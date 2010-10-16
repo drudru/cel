@@ -1,0 +1,121 @@
+
+Feb. 24, 2002 - Release 0.8.5
+
+    MAJOR FEATURES
+      Added a Mark-Sweep Garbage Collector
+
+      Added Win32 support (under Mingw/Msys GCC)
+      Added support for Mac OS X
+
+      Changed the whole build process. See readme.
+
+      No longer using shared-libraries (in order to support multiple OS's)
+
+    KITS
+      Made kits OS independent (or dropped functionality - Win32/fork)
+      
+
+
+Nov. 16, 2001 - Release 0.8
+  Runtime:
+    SYNTAX
+      Added '//' a comment-til-eol delimiter (like many languages), still
+        have to remove double-quote
+    RUNTIME
+      Enhanced performance with use of resolved atoms instead of string matches
+      Added many methods to internal objects (Strings, Floats, Bool, Arrays) 
+      Enhanced --trace operations, much more readable
+      Cleaned up initialization
+      Enhanced VM, made several opcodes a single byte without operands
+    BUGS
+      Fixed malloc(), free() collisions with various OS's
+      Fixed crc32 collision with PNG library
+      Worked around glibc profiling limits to enable gmon profiler
+      A few other little bugs
+    SIMPLEDATA Persistence
+      Handles boolean types
+    KITS
+      Arrays           - more methods (perform, select, reject, etc.)
+      DateTime         - more methods (today, tomorrow, thisMonth, nextMonth, asSeconds, etc.)
+      CGI              - Added server side image map support and the beginings of
+                         cookie support
+      GD               - NEW Rudimentary support for Boutell's GifDraw library
+      BufferArray      - NEW a simple object to handle reading large data sets
+      HTTPClient       - Now uses BufferArray to keep memory consumption low
+      HTML             - Fixes and new methods
+      Math	       - NEW adds enhanced math functions
+      Random	       - NEW adds random number methods
+      OS	       - more methods (directory handling, signals, GDB support)
+      SleepyCat	       - more methods (more cursor support, read-only, db delete, range queryies...)
+    SAMPLES/TESTS
+      Array, Bool. Comments, Random, bugTest, BufferArray, dateTest, metaTest, oskit2, etc...
+    BUILD
+      A few enhancements, optimized build works at -O2
+      
+
+Apr. 23, 2001 - Release 0.7
+  Runtime:
+    MAJOR: Added floating point number support
+    MAJOR: Bug fix with large memory processes
+    Integer - more methods
+    Arrays  - more methods, mathematical 'set' methods
+    Strings - comparison methods, CSV (comma separated value) conversion
+              method 'splitCSV:', 'findLast:', as well
+	      as 'at:', and 'removeAt:' methods
+    Boolean - printing
+    Scripts can now have '#!/usr/local/bin/cel' in the first line so
+              they can be standalone shell executables
+    Reflection/meta-methods 'hasSlot:', 'getSlot:', 'removeSlot:'
+    The 'perform:' and 'perform:With:' methods were added
+    Larger buffer for environment, argv conversion (helpful for CGI)
+    Better handling of nil
+    VM: added setStackAt()
+    Bug in passthru methods in blocks fixed
+    Bug in code generator fixed for empty objects and blocks
+    Other small bug fixes
+
+  Kits:
+      DateTime         - added more conversion routines from strings
+      OS               - raw OS methods for file reading and file locking
+      FileIO           - methods for file object reading and file locking
+      HTTPClient       - small fixes
+      HTML	       - small kit to render html pages
+      CGI 	       - small kit to deal with the CGI API
+      SleepyCat        - created kit with cursors
+      Parallel         - created kit for running methods in parallel
+                         (this kits holds more specific kits)
+      ParallelProcess  - specific kit that runs methods in parallel
+                         processes (the granularity is at the process
+			 level)
+
+  Other:
+    More samples and tests
+
+
+
+Feb. 04, 2001 - Release 0.6
+
+This is the second public release of Cel. 
+
+Here is a list of the changes:
+
+  - Arrays added (in the syntax and with methods)
+  - Dynamic linking to external libraries written in C
+  - Various kits added:
+      Array        - methods for printing and iterating
+      DateTime     - a time object 
+      OS           - methods for fork, exec, wait, sleep, etc.
+      Socket       - methods for creating a client TCP socket
+      PipeIO       - methods for communicating with a child process via pipes
+      FileIO       - methods for dealing with files in the filesystem
+      HTTPClient   - a simple HTTP Client library
+      EmailMessage - a simple library to send email
+  - Environment variables and command line args added to Capsule
+  - Initialization was fixed and method locals are now correct
+  - Start changed to 'Start:'
+  - Lexer bug fixed (newline handling)
+  - String/Atom got new methods (splitOn:, findLast:, etc.) 
+  - Integer got new methods
+  - Various small bugs fixed
+
+

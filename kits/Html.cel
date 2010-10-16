@@ -1,0 +1,29 @@
+
+"
+Cel Module - Html Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'Html'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		Html <- {| buzz. |}.
+
+		Start: name   <+
+			{ 
+				(Globals) setSlot: 'Html' with: Html.
+
+				Kit import: 'HtmlPage'.
+				Kit import: 'HtmlText'.
+				Kit import: 'HtmlTable'.
+				Kit import: 'HtmlUrl'.
+			} 
+	|}
+|}
+

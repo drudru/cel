@@ -1,0 +1,126 @@
+
+"
+Test8 Aqua Module
+
+"
+
+{|
+	Type   <- 'Aqua Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of block methods and compiler cases'.
+
+	Root <-
+	{|
+		zoob.
+		x <-> 5.
+		y <-> 5.
+		d <-> 0.
+		z <-> 0.
+		i <-> 0.
+		s <-> 'zork'.
+		_debugName_ <- 'test8 Root'.
+		Start2  <+ { | j <-> 6. |
+				'j = ' print.
+				j print.
+				'\n' print.
+				s print.
+				'\n' print.
+				'Size = ' print.
+				s size print.
+				'\n' print.
+			}.
+
+		+ var <+ {
+				'var = ' print.
+				var print.
+				'\n' print.
+			}.
+
+		- var <+ { | y <- 4. |
+				'-var = ' print.
+				var print.
+				'\n' print.
+			}.
+
+		Start: name   <+
+			{ 
+                                z: { | :j. i <- 10. | 
+                                     i: i + 10.
+                                     x: x + i.
+                                   }.
+
+
+				i: (3 * 4) - 5 - 1.
+				'i = ' print. i print. '\n' print.
+				i: 3 * 4 - 5 - 1.
+				'i = ' print. i print. '\n' print.
+				i: (3 * 4 - 5 - 1).
+				'i = ' print. i print. '\n' print.
+				i: 3 + (4 * 5).
+				'i = ' print. i print. '\n' print.
+				i: 3 + 4 * 5.
+				'i = ' print. i print. '\n' print.
+				i: 3 * 4 - 5.
+				'i = ' print. i print. '\n' print.
+				i: 3 * (4 - 5).
+				'i = ' print. i print. '\n' print.
+
+				Start2.
+				
+				(x = 5) ifTrue: {
+				   ' x = 5 is true.\n' print.
+                                } ifFalse: {
+				   ' x = 5 is false.\n' print.
+                                }.
+
+
+				(x = 9) ifTrue: {
+				   ' x = 9 is true.\n' print.
+                                } ifFalse: {
+				   ' x = 9 is false.\n' print.
+                                }.
+
+
+                                { y > 0 } whileTrue: {
+                                   y: y - 1.
+				   'y = ' print. y print. '\n' print.
+                                }.
+
+                                d: { x: x + 1 }.
+
+                                d value.
+				'd block x = ' print. x print. '\n' print.
+
+				x: 2.
+
+                                { x > 5 } whileFalse: {
+                                   x: x + 1.
+				   'x = ' print. x print. '\n' print.
+                                }.
+
+                                z: { | i <- 10 | 
+                                     i: i + 10.
+                                     x: x + i.
+                                   }.
+
+                                z value.
+
+				'z block x = ' print. x print. '\n' print.
+
+                                z: { | i <-> 11 | 
+                                     i: i + 13.
+                                     x: i.
+                                   }.
+
+                                z value.
+
+				'z block x = ' print. x print. '\n' print.
+
+			} 
+	|}
+
+|}
+
+
+

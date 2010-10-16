@@ -1,0 +1,166 @@
+#!/Users/dru/cel/vm/cel
+"
+
+Cel numberTest Program
+
+"
+
+{|
+	Type   <- 'Cel Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of numbers'.
+
+	Root <-
+	{|
+		zoob <-> 'adios'.
+		zork <-> 'zork'.
+		bork <-> ''.
+
+		Start: name   <+
+			{ 
+
+				'10345' asInteger print.
+				'\n' print.
+				
+
+
+				('1.0345' asIntegerScaled: 1000) print.
+				'\n' print.
+
+				zork: 1.0345.
+				zork print.
+				'\n' print.
+
+				zork: zork * 3917885444.334 .
+				zork print.
+				'\n' print.
+
+				zork: zork / 3917885444.334 .
+				zork print.
+				'\n' print.
+
+				zork: zork + 0.334 .
+				zork print.
+				'\n' print.
+
+				zork: zork - 0.334 .
+				zork print.
+				'\n' print.
+
+				('3.14159' asFloat) print.
+				'\n' print.
+
+				(('3.14159' asFloat) asInteger) print.
+				'\n' print.
+
+
+				'(34.5 > 12.3) = ' print.
+				(34.5 > 12.3) print.
+				'\n' print.
+				'(34.5 < 12.3) = ' print.
+				(34.5 < 12.3) print.
+				'\n' print.
+				'(34.5 >= 12.3) = ' print.
+				(34.5 >= 12.3) print.
+				'\n' print.
+				'(34.5 < 12.3) = ' print.
+				(34.5 < 12.3) print.
+				'\n' print.
+				'(34.5 <= 12.3) = ' print.
+				(34.5 <= 12.3) print.
+				'\n' print.
+				'(34.5 = 12.3) = ' print.
+				(34.5 = 12.3) print.
+				'\n' print.
+				'(34.5 != 12.3) = ' print.
+				(34.5 != 12.3) print.
+				'\n' print.
+				'\n' print.
+
+				'(12.3 = 12.3) = ' print.
+				(12.3 = 12.3) print.
+				'\n' print.
+				'(12.3 != 12.3) = ' print.
+				(12.3 != 12.3) print.
+				'\n' print.
+				'\n' print.
+
+				'(4.5 > 12.3) = ' print.
+				(4.5 > 12.3) print.
+				'\n' print.
+				'(4.5 >= 12.3) = ' print.
+				(4.5 >= 12.3) print.
+				'\n' print.
+				'(4.5 < 12.3) = ' print.
+				(4.5 < 12.3) print.
+				'\n' print.
+				'(4.5 <= 12.3) = ' print.
+				(4.5 <= 12.3) print.
+				'\n' print.
+				'(4.5 = 12.3) = ' print.
+				(4.5 = 12.3) print.
+				'\n' print.
+				'(4.5 != 12.3) = ' print.
+				(4.5 != 12.3) print.
+				'\n' print.
+				'\n' print.
+
+				'(34 > 12) = ' print.
+				(34 > 12) print.
+				'\n' print.
+				'(34 < 12) = ' print.
+				(34 < 12) print.
+				'\n' print.
+				'(34 >= 12) = ' print.
+				(34 >= 12) print.
+				'\n' print.
+				'(34 < 12) = ' print.
+				(34 < 12) print.
+				'\n' print.
+				'(34 <= 12) = ' print.
+				(34 <= 12) print.
+				'\n' print.
+				'(34 = 12) = ' print.
+				(34 = 12) print.
+				'\n' print.
+				'(34 != 12) = ' print.
+				(34 != 12) print.
+				'\n' print.
+				'\n' print.
+
+				'(4 > 12) = ' print.
+				(4 > 12) print.
+				'\n' print.
+				'(4 >= 12) = ' print.
+				(4 >= 12) print.
+				'\n' print.
+				'(4 < 12) = ' print.
+				(4 < 12) print.
+				'\n' print.
+				'(4 <= 12) = ' print.
+				(4 <= 12) print.
+				'\n' print.
+				'(4 = 12) = ' print.
+				(4 = 12) print.
+				'\n' print.
+				'(4 != 12) = ' print.
+				(4 != 12) print.
+				'\n' print.
+				'\n' print.
+
+				'(12 = 12) = ' print.
+				(12 = 12) print.
+				'\n' print.
+				'(12 != 12) = ' print.
+				(12 != 12) print.
+				'\n' print.
+				'\n' print.
+
+			} 
+	|}
+
+|}
+
+
+

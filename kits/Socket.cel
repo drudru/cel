@@ -1,0 +1,36 @@
+
+"
+Cel Module - Socket Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'Socket'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		SocketParent <- {|
+
+			name <- 'Socket'.
+
+          	|}.
+		Socket <- {| sockFd <- -1. |}.
+
+		Start: name   <+
+			{ 
+				Kit importLib: SocketParent.
+                                SocketParent setSlot: 'parent' with: (Traits Clonable ObjectClass).
+                                (Traits Clonable) setSlot: 'SocketParent' with: SocketParent.
+				(Globals) setSlot: 'Socket' with: Socket.
+
+				SocketParent init.
+	                        Socket setSlot: 'parent' with: SocketParent.
+			} 
+	|}
+
+|}
+

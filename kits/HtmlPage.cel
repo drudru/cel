@@ -1,0 +1,79 @@
+
+"
+Cel Module - Html Page Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'HtmlPage'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		PageParent <- {|
+	  	   addItem: item <+ {
+		      items append: item.	
+		   }.
+
+	  	   addLineBreak <+ {
+		      items append: '<BR>\n'.
+		   }.
+
+		   addHiddenInput: name withValue: val <+ { | tmp <-> 0. |
+		      tmp: String clone.
+		      tmp setCapacity: 80.
+		      tmp append: '<INPUT TYPE="hidden" NAME="'.
+		      tmp append: name.
+		      tmp append: '" VALUE="'.
+		      tmp append: val.
+		      tmp append: '">\n'.
+		      items append: tmp.
+		   }.
+
+		   asString <+ { | text <-> 0. |
+		      text: String clone.
+		      text setCapacity: 4096.
+
+		      text append: '<HTML>\n'.
+		      text append: '<HEAD>\n'.
+		      text append: '<STYLE>\n'.
+		      text append: 'BODY, TD, TABLE, TR {font-family: Helvetica, Arial; font-size: 12px }\n'.
+		      text append: '</STYLE>\n'.
+		      (noCache = 1) ifTrue: {
+			      text append: '<META HTTP-EQUIV="Pragma" CONTENT="no-cache">\n'.
+			      text append: '<META HTTP-EQUIV="Expires" CONTENT="-1">\n'.
+		      }.
+		      text append: '<TITLE>\n'.
+		      text append: title.
+		      text append: '</TITLE>\n'.
+		      text append: '</HEAD>\n'.
+
+		      text append: '<BODY BGCOLOR="#FFFFFF">\n'.
+
+		      items do: { | :i |
+		      	text append: (i asString).
+                      }.
+
+		      text append: '</BODY>\n'.
+		      text append: '</HTML>\n'.
+
+		      text.
+		   }.
+
+		|}.
+
+		Page <- {| title <-> ''. items <-> []. noCache <-> 1. |}.
+
+		Start: name   <+
+			{ 
+				(Globals Html) setSlot: 'Page' with: Page.
+
+				PageParent setSlot: 'parent' with: (Traits Clonable ObjectClass).
+				Page setSlot: 'parent' with: PageParent.
+			} 
+	|}
+|}
+

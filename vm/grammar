@@ -1,0 +1,111 @@
+
+// Need to properly add blocks...
+
+Lexical
+( ) - Grouping of syntactic constructions = make things into 1 term
+[ ] - Optional construction = *1(elem)  = 0 or 1
+
+Grammar
+{ } - Repetition - zero or more
+|   - Alternative
+->  - Production
+
+*Note* this doesn't properly give things a precedence or associative priority
+
+or from the Self manual...
+
++ In order to simplify the presentation, this grammar is ambiguous; precedence and associativity rules are used to resolve the ambiguities. 
+
+
+The Aqua World Lexical overview 
+small-letter -> 'a' | 'b' | ... | 'z' 
+cap-letter -> 'A' | 'B' | ... | 'Z' 
+letter -> small-letter | cap-letter 
+identifier -> (letter | '_') {letter | digit | '_'} 
+keyword -> identifier ':' 
+argument-name -> ':' identifier 
+op-char -> '!' | '@' | '#' | '$' | '%' | '^' | '&' | '*' | '-' | '+' | '=' | '~' | '/' | '?' | 
+'<' | '>' | ',' | ';' | '|' | '\' 
+operator -> op-char {op-char} 
+number -> [ '-' ] (integer | real) 
+integer -> base general-digit {general-digit} | decimal
+real -> fixed-point | float 
+fixed-point -> decimal '.' decimal 
+float -> decimal [ '.' decimal ] ('e' | 'E') [ '+' | '-' ] decimal 
+general-digit -> digit | letter 
+decimal -> digit {digit} 
+base -> decimal ('r' | 'R') 
+string -> ''' { normal-char | escape-char } ''' 
+normal-char -> any character except '\' and ''' 
+escape-char -> '\t' | '\b' | '\n' | '\f' | '\r' | '\v' | '\a' | '\0' | '\\' | '\'' | '\"' | '\?' | numeric-escape 
+numeric-escape -> '\x' general-digit general-digit | ( '\d' | '\o' ) digit digit digit 
+# We will have the special // comments until the code gets more structured
+comment -> '"' { comment-char } '"'
+comment-char -> any character but '"' 
+
+
+
+Grammar for a Text Soup
+Soup -> Object
+Object -> '<' [SlotList] [CodeBlock] '>'
+SlotList -> '|' { Slot '.' } Slot ['.'] '|'
+
+CodeBlock -> { expression '.'} ['^'] expression ['.'] 
+expression -> constant | unary-message | binary-message | keyword-message | '(' expression ')'
+constant -> 'self' | number | string | Object
+unary-message -> receiver identifier
+binary-Message-> receiver operator expression
+keyword-message-> receiver keyword expression { keyword expression }
+
+receiver -> [ expression ]
+
+Slot -> Arg-Slot | Data-Slot | Unary-Slot | Binary-Slot | Keyword-Slot 
+Arg-Slot -> argument-name ; Order is important folks
+Data-Slot -> slot-name | slot-name '<-' expression | slot-name '<->' expression
+Unary-Slot -> slot-name '<-' Object
+# If either of the following have the identifier, then they get placed into the objects argument list.
+Binary-Slot -> operator [identifier] '<-' Object
+Keyword-Slot -> keyword {keyword} '<-' Object | keyword identifier {keyword identifier } '<-' Object
+
+
+
+
+
+
+Grammar for a Text Soup - Modified for Precedence and associativity
+
+Soup -> Object
+
+Object -> '{' [SlotList] [CodeBlock] '}'
+
+SlotList -> '|' { Slot '.' } Slot ['.'] '|'
+
+# We might change this so that a '.' is optional if the last
+# expression was a '{}' delimited object.
+CodeBlock -> { expression '.'} ['^'] expression ['.']
+
+Array -> '[' { receiver } ']'
+
+expression -> message
+
+message -> binary keyword binary { keyword binary } | binary
+
+binary -> unary operator unary { operator unary } | unary
+
+unary -> receiver identifier { identifier } | receiver
+
+receiver -> 'self' | number | string | Object | Array | '(' expression ')' | E
+
+Slot -> Arg-Slot | Data-Slot | Unary-Slot | Binary-Slot | Keyword-Slot 
+
+Arg-Slot -> argument-name ; Order is important folks
+
+Data-Slot -> identifier | identifier '<-' expression | identifier '<->' expression
+
+Unary-Slot -> identifier '<+' Object
+
+# If either of the following have the identifier, then they get placed into the objects argument list.
+
+Binary-Slot -> operator [identifier] '<+' Object
+
+Keyword-Slot -> keyword {keyword} '<+' Object | keyword identifier {keyword identifier } '<+' Object

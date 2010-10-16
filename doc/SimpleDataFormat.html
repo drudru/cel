@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.07 [en] (X11; I; Linux 2.0.36 i686) [Netscape]">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#9E0061" ALINK="#FF0000">
+<B>SimpleDataFormat</B>
+<BR>&nbsp;
+<P>This is a binary stream format that can be used to store a datastructure
+orgranized as a smalltalk-like dictionary. This dictionary can contain
+dictionaries, arrays, 7-bit ASCII strings, integers (1,2,4,8 byte), floats
+(ascii or in IEEE) date-time, blobs (binary data), comments??,or another
+SimpleDataStructure. This format will be self describing, given the knowledge
+of just these types. It should also be powerful enough to describe most
+of the structures needed by the operating system. The goal is to have a
+powerfull language that can just read in this tree with just one command
+and begin to access it. It will also allow the language to serialize this
+structure in one command as well.
+<P>8/17/98 - More has been fleshed out about this format. I originally
+implemented a format like this in my early tests. However, I quickly learned
+I would need to refer to objects previously defined or undefined for the
+real linker. This caused me to change my mind on the format. The format
+will now treat all of the items as objects. When a slot in a dictionary
+refers to its data, it will actually be refering to a file-object-id. This
+refers to a record previously or not previously defined. In fact, the object
+format will look very much like the format in memory now as well and the
+slots will have type indicators (GET, SET, GETSTACK, etc....). All of these
+types will be considered to be individual object records.
+<P>So, the first proto that gets written out will state that a proto is
+getting written.....(CONTINUE HERE)
+<P>12/27/99 - I think the above date is wrong. At any rate, only reference
+id's to previous objects were added. We will now go all the way and really
+mimic the dictiionary format that is present in the system. That means
+that there will be references to the data slots by the keys and those data
+slots will have action types (GET, SET, GETSTACK, etc.).
+<P>(the comment field and embedded SimpleDataFormat stream are in question)
+<P>The format will be in binary and it will be well defined. The reason
+it will be in binary rather than ascii isn't for space reasons, it is more
+for reasons of integrity.&nbsp; If the format was ascii, anybody with and
+editor could place data in the file. This makes checking it more difficult
+and slow. There will be utilities and editors to edit these files and insure
+that their simple format is intact. Then higher level programs can verify
+that the representation of the data is valid (i.e it is a valid code module,
+etc.)
+<P>Most of the files used by the system will be in this format. For example,
+the programs, libraries, etc. will all be in this format. That way, any
+program should have the ability to modify these files easily.
+<P>CRC's are still in question, as well as MD5, etc. These routines will
+have to skip an element/block of bytes&nbsp; in order to work. This is
+not the most optimum&nbsp; of solutions. This will mean that there will
+be an extra compare when moving the pointer. So, when scanning the data,
+the routine will need, the start of the data, the pointer to the area to
+skip, and the length (including that area). For the CRC, this bill be a
+4-byte area, for the MD5, this will be a 16 byte area. On second thought,
+this doesn't sound to bad and it gives the implementer flexibility when
+building the CRC/MD5. Now, since there will be multiple checksums, there
+will need to be a convention on which one gets the priority when doing
+reads or writes.
+<P>6/7/98 - I'll just tag them on the end. They are optional and a CRC
+is done first, if there is one.
+<BR>Also, do I need to
+<BR>&nbsp;
+<P>The types stored
+<BR>--------------
+<P>Dictionaries - (key,values)
+<BR>Arrays
+<BR>ASCII - (7 bit only)
+<BR>Integers - (1,2,4,8 byte)
+<BR>Floats - (IEEE standard and ASCII)
+<BR>Date-Time
+<BR>Blobs
+<P>(Also, there will be a simple token for each type, followed by an optional
+param or count (arrays/dictionaries),
+<BR>&nbsp;and then there will be a double check by having an end token
+for things with counts)
+<P>The format
+<BR>----------
+<P>All Data is in network byte order.
+<P>SimpleDataFormat &lt;- &lt;Header> &lt;Dictionary> [CRC] [MD5]
+<P>Header:
+<BR><B>"AqUa SimpleDaTa\nddd\n???\n"</B>
+<BR>&lt;4 byte length>
+<BR>This is a 20 byte header. The ddd represents a version without the
+decimal in ascii '103' represents 1.03
+<BR>The ??? is an options indicator in ASCII. Only the first ? is defined
+as a 'c'. This indicates a CRC follows the
+<BR>block.
+<P>The next item should be a dictionary
+<BR>&nbsp;
+<BR>&nbsp;
+<P>Nil &lt;- &lt;NilToken>
+<BR>Dictionary &lt;- &lt;Start of Dictionary> &lt;4 byte Int; Reference
+ID> &lt;4 byte Int; Number of Data Items>&nbsp;&nbsp; &lt;4 
+byte Int; Number of Slots>(Data Items) (SlotItems) &lt;End of Dictionary>
+<BR>DataItems &lt;- &lt;Object>
+<BR>DictionaryItem &lt;- &lt;String> &lt;1 byte Int; Action Type> &lt;1
+byte Int; Data Index>
+<BR>Array &lt;- &lt;Start of Array> &lt;4 byte length> &lt;Object>* &lt;EndOfArray>
+<BR>String &lt;- (&lt;Start of 2 byte String> &lt;2 byte length> &lt;Ascii
+Character>* &lt;End of String>) |
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(&lt;Start of 4 byte String>&lt;4 byte length> &lt;Ascii Characters>* &lt;End
+of String>&nbsp; |
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(&lt;Start of Internal String - lower 7 bits are length> &lt;4 byte Int;
+Reference ID> &lt;Ascii Characters>* &lt;End of String>
+<BR>Object &lt;- &lt;Dictionary> &lt;Array> &lt;String> &lt;Float> &lt;DateTime>
+&lt;Integer> &lt;Blobs>&nbsp; &lt;SimpleDataFormatBlob>&lt;Reference>
+<BR>Integer &lt;- &lt;Start of 4 byte Int> &lt;4 byte Int>| &lt;Start of
+8 byte Int> &lt;8 byte Int>
+<BR>SimpleDataFormatBlob &lt;- &lt;StartOfSDFB == SimpleDataFormat>
+<BR>Blob &lt;- &lt;Start of Blob> &lt;4 byte Unsigned length> &lt;Bytes
+of Data>* &lt;End of Blob>
+<BR>DateTime &lt;- &lt;Start of Date Time> "YYYY" "MM" "DD" "HH" "MM" "SS"
+"sss"&nbsp;&nbsp; // sss is milliseconds
+<BR>AsciiCharacters &lt;- "\000 - \0x7f"
+<BR>Float &lt;- ??
+<BR>ReferenceDefinition &lt;- &lt;StartOfReferenceDefinition>&lt;4 byte
+Int>
+<BR>Reference &lt;- &lt;StartOfReference>&lt;4 byte Int>
+<P>ActionType &lt;- (#define PROTO_ACTION_GET&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0
+<BR>#define PROTO_ACTION_SET&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1
+<BR>#define PROTO_ACTION_GETFRAME&nbsp;&nbsp;&nbsp;&nbsp; 2
+<BR>#define PROTO_ACTION_SETFRAME&nbsp;&nbsp;&nbsp;&nbsp; 3
+<BR>#define PROTO_ACTION_PASSTHRU&nbsp;&nbsp;&nbsp;&nbsp; 4
+<BR>#define PROTO_ACTION_CODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+5
+<BR>#define PROTO_ACTION_INTRINSIC&nbsp;&nbsp;&nbsp; 6 )
+<BR>&nbsp;
+<BR>&nbsp;
+<P>StartOfDictionary &lt;- "{"
+<BR>EndOfDictionary &lt;- "}"
+<BR>StartOfSDFB &lt;- "A"&nbsp;&nbsp;&nbsp; Just use the A in Aqua
+<BR>StartOfArray &lt;- "("
+<BR>EndOfArray &lt;- ")"
+<BR>Start Of Internal String &lt;- "\0x80" A byte with high bit set, lower
+seven bits are length
+<BR>StartOf2ByteString &lt;-&nbsp; "["
+<BR>StartOf4ByteString &lt;-&nbsp; "&lt;"
+<BR>EndOfString &lt;- "~"
+<BR>StartOfDateTime &lt;-&nbsp; "T"
+<BR>StartOfBlob &lt;-&nbsp; "B"
+<BR>EndOfBlob &lt;- "b"
+<BR>StartOf4ByteInt &lt;-&nbsp; "I"
+<BR>StartOf8ByteInt &lt;-&nbsp; "L"
+<BR>StartOfReferenceDefinition &lt;-&nbsp; "R"
+<BR>StartOfReference &lt;-&nbsp; "r"
+<BR>NilToken &lt;-&nbsp; "N"
+<BR>TrueToken &lt;-&nbsp; "t"
+<BR>FalseToken &lt;-&nbsp; "f"
+<BR>&nbsp;
+<P>CRC &lt;- CRC32_POLY 0x04c11db7, The register is preinitialized to 0xffffffff.
+The end CRC is not complemented. I believe this is also the network byte
+order crc
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<P>5/16/98 - First creation
+<BR>5/17/98 - 5/18/98 - Continued
+<BR>6/5/98 -&nbsp; Continued with more info (types/stored) and format
+<BR>6/6/98 - More work and info transfered from paper. Figured out the
+details on CRC and wheter to support multi byte intsc
+<BR>6/7/98 - The basic Idea is down. Need to just work out the module format.
+<BR>6/15/98 - Made a few changes to what characters were used as delimiters
+a while ago. Now I'm changing the Array delimiters, I'm also making sure
+things are correct
+<BR>7/8/98 - Added the change for the Todo
+<BR>8/17/98 - Decided to change the format to handle the "mulitple links
+to the same object" requirement&nbsp; (cycles in the graph) This removes
+the todo of wanting unique strings since that is done as a side effect.
+<BR>3/29/99 - Added, the nil object, this is just as important.
+<BR>9/25/99 - Added the 'reference' object so that this indicates it refers
+to an object identified as an integer'
+<BR>9/26/99 - Changed the format so that there are two references. Also,
+I added the reference object to the string and to the dictionary as part
+of the definition (instead of using 'R'. It was ambiguous.)
+</BODY>
+</HTML>

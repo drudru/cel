@@ -1,0 +1,27 @@
+#!/Users/dru/cel/vm/cel
+"
+
+Cel Meta Test Program
+
+"
+
+{|
+	Type   <- 'Cel Application'.
+    	Author <- 'Dru Nelson'.
+    	What   <- 'Cel Meta Test Program'.
+
+	Root <-
+	{|
+
+		What <-> 5.
+
+		Start: name   <+
+			{ | zilbar <-> { }. zork <-> ''. |
+				zilbar print.
+				'\n' print.
+				What print.
+				'\n' print.
+			} 
+	|}
+|}
+

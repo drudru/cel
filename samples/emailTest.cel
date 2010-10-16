@@ -1,0 +1,37 @@
+
+"
+
+Cel Program
+
+"
+
+{|
+	Type   <- 'Cel Application'.
+    	Author <- 'Dru Nelson'.
+    	What   <- 'tests sending of emails'.
+
+	Root <-
+	{|
+		email    <-> ''.
+		body     <-> ''.
+
+		Start: name   <+
+			{ 
+				Kit import: 'EmailMessage'.
+
+				email: EmailMessage clone.
+				email to: 'dru@redwoodsoft.com'.
+				email from: 'dru@zbot.com'.
+				email subject: ' [ Email Test ] - Cel' asString.
+
+				body: '\n\n' asString.
+				body: body + 'All is good. Testing email send from Cel.\n\n'.
+				body: body + 'Cel Test Sample\n\n'.
+				email body: body. 
+				email send.
+			} 
+	|}
+|}
+
+
+

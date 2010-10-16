@@ -1,0 +1,121 @@
+
+"
+Cel Module - OS Object - it needs to have a Point object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'OS'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		OS <- {|
+
+			name <- 'OS'.
+
+			Flags <- {| 
+				    Create <- 0.
+				    Exclusive <- 0.
+				    Append <- 0.
+				    Trunc  <- 0.
+				    NonBlock <- 0.
+                                  |}.
+
+			SeekFlags <- {| 
+				    Begin   <- 0.
+				    Current <- 1.
+				    End     <- 2.
+                                  |}.
+
+			Signals <- {| 
+				    Hup    <-  1.
+				    Int    <-  2.
+				    Quit   <-  3.
+				    Kill   <-  9.
+				    Alarm  <- 14.
+                                  |}.
+
+			getDirectoryForPath: path <+
+				{ | tmp <-> ''. result <-> '' |
+					tmp: (path findLast: '/').
+					(tmp isNil) ifTrue: {
+						result: './'.
+					} ifFalse: {
+						tmp: tmp + 1.
+						result: (path copyFrom: 0 To: tmp).
+					}.
+					
+					result.
+				}.
+
+			getFilenameForPath: path <+
+				{ | tmp <-> ''. result <-> '' |
+					tmp: (path findLast: '/').
+					(tmp isNil) ifTrue: {
+						result: (path copy).
+					} ifFalse: {
+						tmp: tmp + 1.
+						result: (path copyFrom: tmp To: (path size)).
+					}.
+					
+					result.
+				}.
+
+			fileRotate: name from: start upTo: end <+ 
+				{ | tmp <-> ''. i <-> 0. |
+				
+				i: end - 1.
+
+				'start = ' print. start print. '\n' print.
+				
+
+				{ i >= start } whileTrue: {
+					OS rename: (name + '.' + (i asString)) To: (name + '.' + ((i + 1) asString)).
+					i: i - 1.
+
+					'i = ' print. i print. '\n' print.
+				}.
+				
+				i.
+
+				}.
+
+			gdbBreak <+
+				{ | tmp <-> 0. result <-> 0. |
+					tmp: getProcessId.
+					result: (kill: tmp with: (Signals Int)).
+					result.
+				}.
+
+			" Sending a 0 signal just checks if a process
+			  is valid and doesn't send a signal.
+			  Note: if the process doesn't have permission
+			  to signal the other process, it considers
+			  the target process invalid
+                          Maybe we should have true/false/unknown.
+			"
+			isProcValid: p <+
+				{ | result <-> 0 |
+					result: (kill: p with: 0).
+					" In the future, we can differentiate
+					  with No permission vs. No such process
+					"
+					result: (result = 0).
+				}.
+		   |}.
+
+		Start: name   <+
+			{ 
+				//Kit importLib: OS.
+				// Since OS is a built in, we do this
+				(Globals OS) copySlotsFrom: OS.
+				true.
+			} 
+	|}
+
+|}
+

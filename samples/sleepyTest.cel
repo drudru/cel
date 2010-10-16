@@ -1,0 +1,224 @@
+#!/Users/dru/cel/vm/cel
+"
+
+Cel SleepyCat Program
+
+"
+
+{|
+	Type   <- 'Cel Application'.
+    	Author <- 'Dru Nelson'.
+    	What   <- 'Cel SleepyCat Test Program'.
+
+	Root <-
+	{|
+
+
+		Start: name   <+
+			{ | db <-> 0. cursor <-> 0. config <-> 0. |
+				Kit import: 'OS'.
+				Kit import: 'SleepyCat'.
+
+				OS unlink: 'fruit'.
+				db: SleepyCat new.
+				db createDb: 'fruit' inFile: 'fruit' ofType: (SleepyCat DbTypes BTree). 
+				db close.
+
+				db: SleepyCat new.
+				db openDb: 'fruit' fromFile: 'fruit'.
+				db set: 'apple'  With: 'red'.
+				db set: 'orange' With: 'orange'.
+				db set: 'banana' With: 'yellow'.
+				db set: 'grape'  With: 'purple'.
+				db set: 'lime'   With: 'green'.
+				db set: 'lemon'  With: 'yellow'.
+				db set: 'blueberry'  With: 'blue'.
+
+				config: Object clone.
+				config setSlot: 'name' with: 'Dru'.
+				config setSlot: 'email' with: 'dru@redwoodsoft.com'.
+				config setSlot: 'url' with: 'http://redwoodsoft.com/'.
+				db set: 'plum'  With: (SimpleDataFactory asString: config).
+				db close.
+
+				db: SleepyCat new.
+				db openDb: 'fruit' fromFile: 'fruit'.
+				'lemon -> ' print.
+				(db get: 'lemon') print.
+				'\n' print.
+				'blueberry -> ' print.
+				(db get: 'blueberry') print.
+				'\n' print.
+				'apple -> ' print.
+				(db get: 'apple') print.
+				'\n' print.
+				'grape -> ' print.
+				(db get: 'grape') print.
+				'\n' print.
+				'lime -> ' print.
+				(db get: 'lime') print.
+				'\n' print.
+				'orange -> ' print.
+				(db get: 'orange') print.
+				'\n' print.
+				'banana -> ' print.
+				(db get: 'banana') print.
+				'\n' print.
+
+				(db get: 'carrot') ifFalse: {
+				    'Couldn\'t find a carrot\n\n' print.
+				}.
+
+				'plum -> ' print.
+				(SimpleDataFactory fromString: (db get: 'plum')) print.
+				'\n' print.
+
+				db close.
+
+
+
+				'NEXT CURSOR TEST\n' print.
+				'-=-=-=-=-=-=-=-=-\n' print.
+				db: SleepyCat new.
+				db openDb: 'fruit' fromFile: 'fruit'.
+				cursor: db createCursor.
+
+				{ cursor getNext } whileTrue: {
+					cursor key print.
+					' -> ' print.
+					cursor value print.
+					'\n' print.
+				}.
+				cursor close.
+
+				'\n' print.
+				'\n' print.
+				'\n' print.
+				'PREV CURSOR TEST\n' print.
+				'-=-=-=-=-=-=-=-=-\n' print.
+
+				cursor: db createCursor.
+				{ cursor getPrevious } whileTrue: {
+					cursor key print.
+					' -> ' print.
+					cursor value print.
+					'\n' print.
+				}.
+				cursor close.
+
+				db close.
+
+				" Duplicate Records Test"
+				'\n' print.
+				'DUP RECORD/CURSOR TEST\n' print.
+				'-=-=-=-=-=-=-=-=-\n' print.
+				OS unlink: 'languages'.
+				db: SleepyCat new.
+				db setDuplicates.
+				db createDb: 'languages' inFile: 'languages' ofType: (SleepyCat DbTypes BTree). 
+				db set: 'prototype'  With: 'Self'.
+				db set: 'prototype' With: 'Cel'.
+				db set: 'oo' With: 'Smalltalk'.
+				db set: 'oo'  With: 'Squeak'.
+				db set: 'abundant'   With: 'C'.
+				db set: 'abundant'   With: 'Perl'.
+				db set: 'crappy'   With: 'java'.
+				db set: 'crappy'   With: 'C#'.
+				db set: 'crappy'   With: 'Visual Basic'.
+				db set: 'crappy'  With: 'c++'.
+				db set: 'crappy'  With: 'SQL'.
+				db close.
+
+				db: SleepyCat new.
+				db setDuplicates.
+				db openDb: 'languages' fromFile: 'languages'.
+				cursor: db createCursor.
+
+				{ cursor getNext } whileTrue: {
+					cursor key print.
+					' -> ' print.
+					cursor value print.
+					'\n' print.
+				}.
+				cursor close.
+
+				'\n' print.
+				'\n' print.
+
+				'\n' print.
+				'DUP CURSOR SET TEST\n' print.
+				'-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n' print.
+				cursor: db createCursor.
+				cursor key: 'crappy'.
+				(cursor get) ifTrue: {
+					cursor key print.
+					' -> ' print.
+					cursor value print.
+					'\n' print.
+
+					{ cursor getNextDuplicate } whileTrue: {
+						cursor key print.
+						' -> ' print.
+						cursor value print.
+						'\n' print.
+					}.
+				}.
+				cursor close.
+
+				'\n' print.
+				'\n' print.
+
+
+				'\n' print.
+				'DUP RECORD/CURSOR/DELETE TEST\n' print.
+				'-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n' print.
+				cursor: db createCursor.
+
+				cursor key: 'crappy'.
+				cursor value: 'SQL'.
+				cursor getKeyValue.
+				(cursor getKeyValue) ifTrue: {
+					cursor delete.
+				} ifFalse: {
+					'keyvalue crappy/SQL does not exist\n' print.
+				}.
+
+				cursor key: 'crappy'.
+				cursor value: 'Visual Basic'.
+				(cursor getKeyValue) ifTrue: {
+					cursor delete.
+				} ifFalse: {
+					'keyvalue crappy/Visual Basic does not exist\n' print.
+				}.
+				
+				cursor key: 'crappy'.
+				cursor value: 'Apl'.
+				(cursor getKeyValue) ifTrue: {
+					cursor delete.
+				} ifFalse: {
+					'keyvalue crappy/Apl does not exist\n' print.
+				}.
+				cursor close.
+
+				'\n' print.
+				'\n' print.
+				'\n' print.
+
+				cursor: db createCursor.
+
+				{ cursor getNext } whileTrue: {
+					cursor key print.
+					' -> ' print.
+					cursor value print.
+					'\n' print.
+				}.
+				cursor close.
+
+				'\n' print.
+				'\n' print.
+
+			} 
+	|}
+
+|}
+

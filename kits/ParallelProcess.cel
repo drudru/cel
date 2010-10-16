@@ -1,0 +1,83 @@
+
+"
+Cel Module - Parallel Process Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'ParallelProcess'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		ProcessParent <- {|
+
+		   init <+ {
+		      pool: (Array new).
+		   }.
+
+
+		   fork: method on: obj with: arg <+ { | pid <-> 0. |
+
+			" First make room if necessary "
+			((pool size) < size) ifFalse: {
+				OS wait.
+				pool removeAt: 0.
+			}.
+
+			" Do the fork "
+		        pid: OS fork.
+
+			(pid = 0) ifTrue: {
+				obj perform: method with: arg.
+				OS exit: 0.
+			} ifFalse: {
+				pool append: pid.
+			}.
+		   }.
+
+		   " Take an array for the arguments "
+		   fork: method on: obj with: arg1 with: arg2 <+ { | pid <-> 0. |
+
+			" First make room if necessary "
+			((pool size) < size) ifFalse: {
+				OS wait.
+				pool removeAt: 0.
+			}.
+
+			" Do the fork "
+		        pid: OS fork.
+
+			(pid = 0) ifTrue: {
+				obj perform: method with: arg1 with: arg2.
+				OS exit: 0.
+			} ifFalse: {
+				pool append: pid.
+			}.
+		   }.
+
+
+		   cleanUp <+ {
+		      { (pool size) > 0 } whileTrue: {
+		         OS wait.
+			 pool removeAt: 0.
+		      }.
+		   }.
+
+		|}.
+
+		Process <- {| size <-> 1. pool <-> ''. |}.
+
+		Start: name   <+
+			{ 
+				(Globals Parallel) setSlot: 'Process' with: Process.
+
+				ProcessParent setSlot: 'parent' with: (Traits Clonable ObjectClass).
+				Process setSlot: 'parent' with: ProcessParent.
+			} 
+	|}
+|}
+

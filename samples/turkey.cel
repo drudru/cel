@@ -1,0 +1,38 @@
+
+"
+Test4 Aqua Module
+
+"
+
+{|
+
+	Type   <- 'Aqua Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCase'.
+
+	Root <-
+	{|
+		x.
+		Start: name   <+
+			{ 
+				setSlot: 'result' with: 5 + 3.
+				setSlot: 'x' with: 5.
+				setSlot: 'y' with: Object clone.
+				setSlot: 'z' with: 'zebra'.
+
+				x className print.
+				99  print.
+				' ' print.
+				y   className print.
+				'\n' print.
+				z   print.
+				'\n' print.
+				' 5 + 3 =  ' print.
+
+				result print.
+				'\n' print.
+			} 
+	|}
+
+|}
+

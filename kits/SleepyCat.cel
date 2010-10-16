@@ -1,0 +1,38 @@
+
+"
+Cel Module - SleepyCat Object - it needs to have a Point object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'SleepyCat'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		SleepyCat <- {|
+
+			name <- 'SleepyCat'.
+
+			DbTypes <- {| 
+				    BTree   <- 1.
+				    Hash    <- 2.
+				    Queue   <- 3.
+				    RecNo   <- 4.
+				    Unknown <- 5.
+                                  |}.
+		   |}.
+
+		Start: name   <+
+			{ 
+				Kit importLib: SleepyCat.
+				(Globals) setSlot: 'SleepyCat' with: SleepyCat.
+				true.
+			} 
+	|}
+
+|}
+

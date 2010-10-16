@@ -1,0 +1,120 @@
+
+"
+Cel Module - PipeIO Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'PipeIO'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		PipeIOParent <- {|
+
+			name <- 'PipeIO'.
+
+			runCommand: cmd <+ { | inFds <-> 0. outFds <->. errFds <->. childPid <->. i <-> 0.|
+
+					" Pipe returns an array of descriptors 
+                                          0 is for reading and 1 is for writting"
+
+					inFds:  (OS createPipe).
+					outFds: (OS createPipe).
+					errFds: (OS createPipe).
+
+					childPid: OS fork.
+
+					(childPid = 0) ifTrue: {
+						" The child "
+
+						" Turn message tracing off. This is a Cel thing "
+						traceOff.
+
+						OS dupFd: (inFds at: 0) to: 0.
+						OS dupFd: (outFds at: 1) to: 1.
+						(merge = 1) ifTrue: {
+							OS dupFd: (outFds at: 1) to: 2.
+						} ifFalse: {
+							OS dupFd: (errFds at: 1) to: 2.
+						}.
+
+						" Why do I close these. Simple.
+						  If I don't, then the forked process will have
+						  them open as well. Then pipes that the
+                                                  parent closes will never really close 
+						  since the new exec'd process will have
+						  them open. These pipes need to be closed
+						  or else this causes major problems. "
+						i: 3.
+						{ i < 64 } whileTrue: {
+							OS close: i.
+							i: i + 1.
+						}.
+
+						"The exec will do the file descriptor cleanup"
+						OS exec: cmd.
+
+						" Since the exec command removes this Cel
+						code from this process space. There
+						isn't a need to set up the proto"					
+					} ifFalse: {
+						" The parent "
+
+						pid: childPid.
+
+						"Parent writes to the child's in etc."
+						"Pipes: 0 for read, 1 for write"
+
+						stdIn:  (outFds at: 0).
+						OS close: (outFds at: 1).
+
+						stdOut: (inFds at: 1).
+						OS close: (inFds at: 0).
+
+						stdErr: (errFds at: 0).
+						OS close: (errFds at: 1).
+
+						closed: 0.
+					}.
+				}.
+
+			readInto: buff Size: s <+ {
+					OS readFd: stdIn Into: buff Size: s.
+				}.
+
+			writeFrom: buff <+ {
+					OS writeFd: stdOut From: buff.
+				}.
+
+			close <+ { | status <-> 0. |
+				    (closed = 0) ifTrue: {
+					OS close: stdIn.
+					OS close: stdOut.
+					OS close: stdErr.
+					status: (OS waitPid: pid).
+					closed: 1.
+				    }.
+				   status.
+				}.
+
+          	|}.
+
+		PipeIO <- {| merge <- 1. pid <-> -1. stdOut <-> -1. stdIn <-> -1. stdErr <-> -1. closed <-> 1. |}.
+
+		Start: name   <+
+			{ 
+				Kit import: 'OS'.
+
+                                PipeIOParent setSlot: 'parent' with: (Traits Clonable ObjectClass).
+                                (Traits Clonable) setSlot: 'PipeIOParent' with: PipeIOParent.
+				(Globals) setSlot: 'PipeIO' with: PipeIO.
+
+	                        PipeIO setSlot: 'parent' with: PipeIOParent.
+			} 
+	|}
+|}
+

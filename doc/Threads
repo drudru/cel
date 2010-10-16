@@ -1,0 +1,39 @@
+
+Thoughts about threads....
+
+All programs should be event driven. That is, a single program should
+be able to answer user requests or other requests when it is blocked
+on a request.
+
+Since unix cannot quarantee that file operations on real files won't
+be blocked, kernel threads would have to be used.
+
+
+However, for sockets or pipes, select could be used to handle event detection.
+If we used kernel threads for real files, then they could run independently
+(and on a separate processor).
+
+So, why use threads?  Well, lets say that we don't. Then each process will
+have to do it's own thing and communicate to a central process using 
+sockets/RPC/DO. This is heavy on the communication side, but it would work.
+Each process would have it's own objectSpace, and interpreter. They would
+each have an event loop probably, so they could reply about status.
+
+If we did the single select system, it too would have just one interpreter,
+no worries about locking, and the system could share objects efficiently.
+However, the code is complicated by the fact that it must maintain it's
+own state.
+
+If we did the multiple threads system, there would have to be mutexes to
+share between threads to insure that the Garbage collector, interpreter, and
+other parts are not stepping over each other. This would be a little heavier
+than the single address space model, but it would provide less overhead
+than the multi-process model for communication. All of these depend on...
+are multiprocessor boxes out there going to be used? Is the application
+Socket or RealFile based? What is the kind of work that would be done in
+a thread?
+
+Hopefully, we can support any of these models.
+
+
+

@@ -1,0 +1,293 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.61 [en] (X11; U; Linux 2.2.16 i686) [Netscape]">
+   <title>activation</title>
+</head>
+<body>
+<b><font face="Arial,Helvetica">The Activation Record</font></b>
+<br>&nbsp;
+<p>Until all of the (WHY???)'s&nbsp; or "(??"'s are gone, this document
+isn't done.
+<br>&nbsp;
+<br>&nbsp;
+<p><tt>&nbsp; Ok, as seen from an intstruction in a code segment, here
+is the stack..</tt>
+<br><tt>&nbsp; (after the code executed a 'setupFrame n')</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x&nbsp; Arg x</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp; ...</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8&nbsp; Arg 0</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7&nbsp; Mesg</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6&nbsp; Target</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5&nbsp; Argument Count</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4&nbsp; PC (of instruction after
+Call's operand) [Pushed by Call instruction]</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3&nbsp; Parent Local (what the parent
+is)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [Pushed by ActivateSlot/ActionPassThru]</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp; Code-Proto Pointer (the
+proto that holds _code_ and the locals,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is used by
+pushSelf (possibly what block context would use as a parent)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+[Pushed by ActivateSlot/ActionPassThru]</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp; Preserved FP</tt>
+<br><tt>FP->&nbsp; 0&nbsp; locals&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+[The FP is what the SP was, SP preservation]</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp; ...</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; n&nbsp; locals</tt>
+<br><tt>SP-></tt>
+<p><tt>First bits of code within a method:</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Name: [Ignore This Slot] Count: [86]</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+"0" &lt;- {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+"op" -> (Get:0) -> "slotName"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+"operand" -> (Get:1) -> "Start"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+"1" &lt;- {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+"op" -> (Get:0) -> "setupFrame"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+"type" -> (Get:1) -> "self"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}</tt>
+<br>&nbsp;
+<p>Keep the previous info in mind.
+<p><b>Problems:</b>
+<br>1 - will a context reference have enough resolution to refer to a context
+or be equivalent to a context's FP? (It uses the bottom 3 bits)
+<p><b><font face="Arial,Helvetica">(Need to finish implementing, and use
+'stackframe.doc' as the working template)</font></b>
+<p><font face="Arial,Helvetica">This section describes the most complicated
+portion of this system. Understanding it is necessary for working on the
+runtime.</font>
+<p><font face="Arial,Helvetica">In the following paragraphs, I will state
+that code can be activated, this is the same as saying 'run'.</font>
+<p><b><font face="Arial,Helvetica">Code vs. Blocks</font></b>
+<br><font face="Arial,Helvetica">Code can be activated in several ways:
+a slot activates via a passthru, or a block activates via a message send,
+or the VM starts and calls the start (it simulates a passthru). Blocks
+are just like Smaltalk/Self blocks, however, I tried to keep the underlying
+code for either code system the same. (In Smalltalk the block activations
+have different compiled code.) I didn't like the idea that the code for
+a method was different than the code for a block (Self went along this
+path as well).</font>
+<p><font face="Arial,Helvetica">When a proto has code defined for the slot,
+the slot is initialized with a reference to a code proto. The named slot
+is now what is called a 'PassThru' to the code proto. This is what is the
+default case when you compile code. The code proto has a slot called 'value'
+or 'value:' or 'value:with:', etc.</font>
+<br><font face="Arial,Helvetica">That slot refers to a blob of code.</font>
+<p><font face="Arial,Helvetica">&lt;Diagram Here></font>
+<p><font face="Arial,Helvetica">When a slot refers to a code proto and
+it wasn't setup as a passThru, then it is a normal reference. The only
+way to activate it is to use the 'value', or 'value:", etc., message. (Which
+is what the PassThru refers to)</font>
+<p><b><font face="Arial,Helvetica">Activation</font></b>
+<br><font face="Arial,Helvetica">As mentioned before, only methods or block
+invocations actually cause new activation contexts.</font>
+<br><font face="Arial,Helvetica">Ok, so there are several steps to an activation.
+We will go through those and then cover the various special cases in each
+step.</font>
+<p><font face="Arial,Helvetica">Lets assume that we are already in a method
+and we are in some code which is about to activate a slot.</font>
+<p><font face="Arial,Helvetica">The first thing the compiler will do is
+push the arguments onto the stack. They will be pushed in reverse order
+(like C). The first argument will be pushed last (which should be the target
+of the slot activation).</font>
+<p><font face="Arial,Helvetica"><b>Special.</b> If any of the arguments
+are references to blocks, then the VM must clone the proto and set the
+parent to refer to this context during these push statements. It does that
+by making the parent of the newly cloned block proto a <b>Context Reference</b>.
+This reference should be the FP of the context on the stack of this activation...
+the one doing the push.</font>
+<br><font face="Arial,Helvetica">(Can this refer to a FP??)</font>
+<br><font face="Arial,Helvetica">After the cloning and setting of the parent,
+the push instruction will push a reference to this new code proto onto
+the stack. We will cover this in more detail further on.</font>
+<p><font face="Arial,Helvetica">After the arguments, an argument count
+should be pushed on the stack. This is useful for simple error checking
+and/or for getting information about the activation later on.&nbsp; For
+example, later on we may have the ability to treat the entire argument
+as an array and access it or manipulate it.*NOTE* The argument count is essentially
+just a count of the number of items that follow on the stack. Therfore, all
+activation records will have a count of 2 or more since they will always
+have at least a: 1- target, and 2-message.</font>
+<p><font face="Arial,Helvetica">After that, the call to activateSlot is
+done. The VM will do several things automatically. The first thing that
+it will do is increment the program counter to be behind the operand of
+the call (so that when the return happens, the code executes from there).
+Next the VM pushes the program counter onto the stack. Finally, the function
+is called.</font>
+<p><font face="Arial,Helvetica">For the purposes of this discussion, the
+call is always to 'activateSlot'.</font>
+<p><font face="Arial,Helvetica">activateSlot is a very, very, very powerful
+function (it is also slightly complex). It embodies the core principles
+of the prototype inheritance system. The first thing it will do is locate
+the slot in the target. If the slot isn't there, then it will lookup the
+parent slot of the target. If it finds the parent, then it will follow
+the parent slot and start the search again at that proto. If that slot
+doesn't exist, the algorithm will lookup the information in the DefaultBehaviours
+or the Global namespaces. If it does find the slot, then it will go to
+the next step. If it finds it and it was a GETFRAME or Frame referenced
+parent variable, it will use that value. Finally, if a method isn't found
+or it goes up too many parent levels (32 currently), then it declares the
+activateSlot a 'method not found' error. This should then be considered
+an 'exception' (which will be handled by an exception handling system in
+the near future.)</font>
+<p><font face="Arial,Helvetica"><b>Special.</b> Code protos will usually
+have their parent slot set as a GETFRAME type. This is because code protos
+refer to their local variables (which have a higher priority than the target
+object). So, the code-proto's parent will refer to the actual target that
+was pushed onto the stack. Usually this code-proto is the 'secret self'.</font>
+<br><font face="Arial,Helvetica">Example: if you do 'car run.' The run
+method will be the self since it will have local variables. However, the
+real self in this instance would be the object messaged ('car').</font>
+<br><font face="Arial,Helvetica"><b>Special.</b> Another Related Important
+Thing is to consider the case were the code-proto is pointing to a block
+proto. Block protos could have variables on the stack local to the FP.
+However, when the parent slot is accessed, the activateSlot will use a
+different FP internally for frame relative lookups (without really changing
+the FP). Lets cover this later...we need to understand more before covering
+that.</font>
+<p><font face="Arial,Helvetica">OK, once it finds the slot, it peforms
+the specific action. The actions are GET, SET, GETFRAME, SETFRAME, PASSTHRU,
+CODE, or INTRINSIC.</font>
+<br><font face="Arial,Helvetica">GET is easy, it just returns the slot's
+data. SET will set the slot's data with the argument.</font>
+<br><font face="Arial,Helvetica">GETFRAME will use the data in the data
+slot of the proto as an FP or frame relative number and get that location.
+SETFRAME does the same for a set operation. GETFRAME and SETFRAME exist
+only to handle the parent slot for a code proto or local variables for
+any code activations.</font>
+<p><font face="Arial,Helvetica">PASSTHRU will use the data as a reference
+to a code proto and activate the method (via slot '_code_').
+<b>Note: code
+protos only have one '_code_' slot... a code proto exists for each method.</b>
+The result of the PASSTHRU is a new context... more on that later. CODE
+activations are the results of 'do or value' or 'value:' slots. If you
+are referencing a code proto directly (as a block), then this can happen.
+The result of activating this method will cause a new context. INTRINSIC
+slots will cause the referenced C code to be activated. The slot values
+are set to pointers to routines that are written in C or assembly.</font>
+<p><font face="Arial,Helvetica">For all of those actions, only two are
+important. The PASSTHRU and CODE slots. They take us to the next parts
+of the activation (because all of the others will do their work and leave
+the result on the stack frame... ie. these cause new activations)</font>
+<p><b><font face="Arial,Helvetica">Next Part of the Activation</font></b>
+<p><font face="Arial,Helvetica">These two <b>action handlers</b> will do
+the next interesting thing.</font>
+<p><font face="Arial,Helvetica">Generally, the target of a call will be
+some proto or the code-proto for the current context (secret self). The
+first activateSlot in a method will always have the code-proto as the first
+call. After that, a new target proto may be acquired and it will be the
+target for subsequent calls to activateSlot. So, to reiterate, the target
+of a call could be the code-proto or it could be some other object. The
+reason that this is important is as follows:</font>
+<p><font face="Arial,Helvetica">When a new activation is started, and it
+does the 'frame mapped parent local', and it just used the target, it would
+be using the previous context's code proto. This is not what is intended.</font>
+<p><font face="Arial,Helvetica">So, they will look at that target and judge
+by it's type (which is encoded in the reference) to see if it is a code-proto
+or otherwise (A relatively inexpensive check.). If it is a code-proto,
+it will take the code-proto's parent from the secret self as the parent-local
+from the existing context (since the FP didn't change). If it isn't a code-proto,
+it will just take the target. Once it has this value it will push it onto
+the stack.</font>
+<br><font face="Arial,Helvetica"><b>Special: </b>What if the target is
+a block to activate? It should just push the parent local for the context
+pointed to by the parent context reference. The only reason that a value
+is pushed is for a code-proto, we could just push nil.</font>
+<br><font face="Arial,Helvetica">What if the target is a method from a
+previous activation? (Example, a method is activated that was located through
+the current block-proto's parent). What gets pushed for the code-proto?
+This is probably the most complicated example. The answer is this, the
+block-proto should have it's parent followed and the parent local should
+be copied from it (unless it was a block activation as well, then it should
+follow that too.)</font>
+<p><font face="Arial,Helvetica">We are now ready to proceed to the next
+step.</font>
+<p><b><font face="Arial,Helvetica">Next Step...</font></b>
+<br><font face="Arial,Helvetica">Now we have located the new method. The
+passThru will set the PC to the begining of the _code_ blob. Both of the
+previous '<b>action handlers'</b> will push onto the stack the pointer
+to this code proto. This is necessary since the pushSelf opcode will need
+to push the 'secret self'.</font>
+<br><font face="Arial,Helvetica">WHY? Since block-proto's will be cloned,
+their code will not know what the 'secret-self' is when it is assembled.
+Therefore, the pushSelf opcode must dynamically get this value.</font>
+<p><font face="Arial,Helvetica">Finally, the handler will return. This
+will cause the VM to continue executing code.</font>
+<br>&nbsp;
+<br>&nbsp;
+<p><b><font face="Arial,Helvetica">Code Execution</font></b>
+<br><font face="Arial,Helvetica">The code in the method should be the same.
+The first instruction should be a 'setupFrame' opCode and operand. It will
+preserve the FP on the stack. Then it will set the new FP to the current
+stack pointer. It should then move the stack pointer forward for the number
+of local variables that it has.</font>
+<p><font face="Arial,Helvetica">At this point, the code can now execute.
+Everything that needed to be done is done. The first set of code should
+be for local variable initialization.</font>
+<br>&nbsp;
+<p><b><font face="Arial,Helvetica">Returning within the Method</font></b>
+<br><font face="Arial,Helvetica">The last thing a method can do is perform
+a return. If a method has a value to return, which it always should, it
+will leave that as the last thing pushed onto the stack. The next instruction
+will be a restoreFrame. This will take the value and store it temporarily.
+Then it will restore the stack pointer to what the fp is. Then it will
+restore the previous method's fp. Finally, it will push the new return
+value back onto the stack. The next instruction will be the 'return' opcode.
+It will get it's operand and hold that temporarily. Next it will get the
+return value off of the stack and store that temporarily as well. Now the
+stack will be unwound back using the operand as a counter. It is used to
+unwind the arguments from the call off of the stack. Then it leaves the
+return value there. At this point the previous context is now ready to
+resume.</font>
+<br>&nbsp;
+<p><font face="Arial,Helvetica"><b>Special</b>. Lets review and add to
+the handling of the 'parent' slot for a block activation.</font>
+<br><font face="Arial,Helvetica">When a block is acitvated, it will set
+it's parent to be a context reference. When a new activateSlot call occurs
+and the variable cannot be found in the block proto, it will follow the
+parent slot. This slot will contain a context reference. If that reference
+is below the current frame pointer, then the system should throw an exception.
+We cannot allow contexts to be referenced that no longer exist.</font>
+<br><font face="Arial,Helvetica">If the context is valid, then the activateSlot
+call will set the FP internal to itself to be the same as the context reference.
+If the parent of the new context is a block, it would do the same procedure
+again.</font>
+<p><font face="Arial,Helvetica">Once it finds the slot, the typical handlers
+will take care of the call (using this hidden FP). However, if it is a
+passThru or code it will work. Just as it does normally (the target and
+the new method proto will be mapped, and a new context is started. They
+will not need the hidden FP). The moral of this story is that the FP doesn't
+get changed in a visible way.</font>
+<br>&nbsp;
+<p><b><font face="Arial,Helvetica">Worst Case Example</font></b>
+<p><font face="Arial,Helvetica">A worst case scenario would be a method
+activation after a block was activated, and that was just described in
+the previous paragraph.</font>
+<br>&nbsp;
+<br>&nbsp;
+<p><font face="Arial,Helvetica">6/27/99 - Changed the activation documentation,
+it is too hazy...</font>
+<br><font face="Arial,Helvetica">7/10/99 - Worked it out a little more,
+not done, need to implement then document.</font>
+<br><font face="Arial,Helvetica">6/3/00&nbsp;&nbsp; - Another attempt to
+document one of the most complex portions of the system</font>
+<br><font face="Arial,Helvetica">7/2/00 - A really good attempt at getting
+this stuff documented.</font>
+<br><font face="Arial,Helvetica">8/14/00 - Day(s) after the big re-write.</font>
+<br><font face="Arial,Helvetica">8/21/00 - A few tidbits clarified and
+added on.</font>
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>

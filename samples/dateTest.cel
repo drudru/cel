@@ -1,0 +1,168 @@
+#!/Users/dru/cel/vm/cel
+"
+
+Cel Program
+
+"
+
+{|
+	Type   <- 'Cel Application'.
+    	Author <- 'Dru Nelson'.
+    	What   <- 'tests DateTime object'.
+
+	Root <-
+	{|
+		now    <-> ''.
+		tmp    <-> ''.
+
+		Start: name   <+
+			{ 
+				Kit import: 'DateTime'.
+
+				'Now: ' print.
+				now: DateTime now.
+
+				'\n' print.
+				now asString print.
+				'\n' print.
+
+
+
+				'Today: ' print.
+				now: DateTime today.
+
+				'\n' print.
+				now asString print.
+				'\n' print.
+
+
+				'Tomorrow: ' print.
+				now: DateTime tomorrow.
+
+				'\n' print.
+				now asString print.
+				'\n' print.
+
+				'thisMonth: ' print.
+				now: DateTime thisMonth.
+
+				'\n' print.
+				now asString print.
+				'\n' print.
+
+				'nextMonth: ' print.
+				now: DateTime nextMonth.
+
+				'\n' print.
+				now asString print.
+				'\n' print.
+
+
+
+
+				'add 32 days: ' print.
+				now addDays: 32.
+
+				'\n' print.
+				now asString print.
+				'\n' print.
+
+				'\n' print.
+				'\n' print.
+
+				'add 2 months: ' print.
+				now addMonths: 2.
+				'\n' print.
+				now asString print.
+				'\n' print.
+
+
+
+				'Now from string: ' print.
+				now: DateTime now.
+				tmp: now asString.
+
+				now: (DateTime fromString: tmp).
+				now asString print.
+				'\n' print.
+
+				tmp: '2000-10-10'.
+				tmp print.
+				'\n' print.
+				now: (DateTime fromString: tmp).
+				now asString print.
+				'\n' print.
+
+				tmp: '2000-2-28 19:12:59'.
+				tmp print.
+				'\n' print.
+				now: (DateTime fromString: tmp).
+				now asString print.
+				'\n' print.
+
+				tmp: '2000-2-28 9:12:59'.
+				tmp print.
+				'\n' print.
+				now: (DateTime fromString: tmp).
+				now asString print.
+				'\n' print.
+
+				tmp: '2000-2-28 9:12'.
+				tmp print.
+				'\n' print.
+				now: (DateTime fromString: tmp).
+				now asString print.
+				'\n' print.
+
+				tmp: '1970-1-1 00:01:23'.
+				tmp print.
+				'\n' print.
+				now: (DateTime fromString: tmp).
+				now asString print.
+				'\n' print.
+
+				'Conversion Tests\n' print.
+				tmp: '9-Nov-01'.
+				tmp print.
+				'\n' print.
+				now: (DateTime fromDMYString: tmp).
+				now asString print.
+				'\n' print.
+				now asDateString print.
+				'\n' print.
+				'\n' print.
+
+				tmp: '9-Nov-2001'.
+				tmp print.
+				'\n' print.
+				now: (DateTime fromDMYString: tmp).
+				now asString print.
+				'\n' print.
+				now asDateString print.
+				'\n' print.
+				'\n' print.
+
+				tmp: '21-Mar-00'.
+				tmp print.
+				'\n' print.
+				now: (DateTime fromDMYString: tmp).
+				now asString print.
+				'\n' print.
+				now asDateString print.
+				'\n' print.
+
+				tmp: 'tomorrow - today'.
+				tmp print.
+				'\n' print.
+				now: (DateTime tomorrow) - (DateTime today).
+				now asString print.
+				'\n' print.
+				now asSeconds print.
+				'\n' print.
+
+			} 
+	|}
+|}
+
+
+

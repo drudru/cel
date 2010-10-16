@@ -1,0 +1,50 @@
+
+"
+
+Cel StringTest Program
+
+"
+
+{|
+	Type   <- 'Cel Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of strings'.
+
+	Root <-
+	{|
+		zoob <-> 'adios'.
+		zork <-> 'zork'.
+		urls <-> ''.
+
+		Start: name   <+
+			{ | html <-> 0. | 
+				" Remove the first two arguments, the vm & program name "
+				(Capsule arguments) removeAt: 0.
+				(Capsule arguments) removeAt: 0.
+
+"
+				(Capsule arguments size = 0) ifTrue: {
+					urls: [ 'http://www.redwoodsoft.com/cel/' ].
+				} ifFalse: {
+					urls: (Capsule arguments) clone.
+				}.
+"
+				urls: [ 'http://www.redwoodsoft.com/cel/' ].
+
+				Kit import: 'HTTPClient'.
+
+				urls do: { | :url |
+					'Opening URL: ' print. url print. '\n' print.
+
+					html: (HTTPClient openUrl: url).
+					html header print.
+					html body print.
+				}.
+			} 
+	|}
+
+|}
+
+
+

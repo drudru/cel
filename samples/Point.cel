@@ -1,0 +1,61 @@
+
+"
+Aqua Module - Point Object - it needs to have a Point object
+
+"
+
+{|
+
+	Type      <- 'Aqua Module'.
+	Name      <- 'Point'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'..
+    	Author    <- 'Dru Nelson'.
+	URL       <- 'http://www.redwoodsoft.com/aqua'.
+
+	Root <-
+	{|
+		PointClass <- {|
+				" Make a new point and make it contain the sum
+				  of the other points "
+				+ pt <+ { | t <-> 0. z. |
+				          t: Point clone.
+				          t x: x + (pt x).
+					  t y: y + (pt y).
+					  t print.
+					  t.
+					}.
+				" This isn't implemented in the compiler yet. KeywordSlot
+				do: pt this: pt2 <+ { | t <-> 0. z. |
+				          t: Point clone.
+				          t x: x + (pt x).
+					  t y: y + (pt2 y).
+					  t print.
+					  t.
+					}.
+                                "
+
+				className <- 'PointClass'.
+				print <+ { | zeta. | 'x = ' print. x print. ' y = ' print. y print. '\n' print. }.
+				super <- 'ObjectClass'.
+				_debugName_ <- 'PointClass'.
+			   |}.
+
+		Point <- {| x <-> 0. y <-> 0.
+				_debugName_ <-> 'Point'.
+			|}.
+
+		Start: name   <+
+			{ 
+				PointClass setSlot: 'parent' with: (Traits Clonable ObjectClass).
+				(Traits Clonable) setSlot: 'PointClass' with: PointClass.
+				(Globals) setSlot: 'Point' with: Point.
+
+				Point setSlot: 'parent' with: PointClass.
+
+				true.
+			} 
+	|}
+
+|}
+

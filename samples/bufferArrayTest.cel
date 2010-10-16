@@ -1,0 +1,45 @@
+#!/Users/dru/cel/vm/cel
+"
+Test9 Aqua Module
+
+"
+
+{|
+
+	Type   <- 'Aqua Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of float methods'.
+
+	Root <-
+	{|
+		t     <-> 0.
+		f     <-> 0.
+		
+		Start: name   <+
+			{ 
+			        Kit import: 'BufferArray'.
+
+				t: BufferArray clone.
+				t init.
+
+				t append: '1234567890'.
+				t append: 'abcdefghij'.
+				t append: 'ABCDEFGHIJ'.
+
+				'this should print:\n1234567890abcdefghijABCDEFGHIJ\n' print.
+				'\n' print.	
+
+				t asString print.
+
+				'\n' print.	
+				'\n' print.	
+
+
+			} 
+	|}
+
+|}
+
+
+

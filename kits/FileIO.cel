@@ -1,0 +1,74 @@
+
+"
+Cel Module - FileIO Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'FileIO'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		FileIOParent <- {|
+
+			name <- 'FileIO'.
+
+			openForWrite: path <+ { 
+					fileName: path.
+					fd: (OS openForWrite: path).
+					fd.
+				}.
+
+			openForRead: path <+ { 
+					fileName: path.
+					fd: (OS openForRead: path).
+					fd.
+				}.
+
+			readInto: buff Size: s <+ {
+					OS readFd: fd Into: buff Size: s.
+				}.
+
+			readInto: buff <+ { | tmp <-> 0. |
+					tmp: String clone.
+					tmp setCapacity: 4096.
+
+					{ (OS readFd: fd Into: tmp Size: 4096) > 0 } whileTrue: {
+						buff append: tmp.
+        	                        }.
+					buff size.
+				}.
+
+			writeFrom: buff <+ {
+					OS writeFd: fd From: buff.
+				}.
+
+			renameTo: newName <+ {
+				    OS rename: fileName To: newName.
+				}.
+
+			close <+ { 
+				    OS close: fd.
+				}.
+
+          	|}.
+
+		FileIO <- {| fd <-> -1. fileName <-> ''. |}.
+
+		Start: name   <+
+			{ 
+				Kit import: 'OS'.
+
+                                FileIOParent setSlot: 'parent' with: (Traits Clonable ObjectClass).
+                                (Traits Clonable) setSlot: 'FileIOParent' with: FileIOParent.
+				(Globals) setSlot: 'FileIO' with: FileIO.
+
+	                        FileIO setSlot: 'parent' with: FileIOParent.
+			} 
+	|}
+|}
+

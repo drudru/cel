@@ -1,0 +1,48 @@
+
+"
+Cel Module - Html Text Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'HtmlText'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		TextParent <- {|
+
+		   asString <+ { | tmp <-> 0. |
+			(bold = 0) ifTrue: { 
+			      tmp: title asString.
+			} ifFalse: {
+				tmp: String clone.
+				tmp setCapacity: 32.
+				tmp append: '<B>'.
+                                tmp append: title asString.
+				tmp append: '</B>'.
+			}.
+			tmp.
+		   }.
+
+		   setBold <+ {
+			bold: 1.
+		   }.
+
+		|}.
+
+		Text <- {| title <-> ''. bold <-> 0. |}.
+
+		Start: name   <+
+			{ 
+				(Globals Html) setSlot: 'Text' with: Text.
+
+				TextParent setSlot: 'parent' with: (Traits Clonable ObjectClass).
+				Text setSlot: 'parent' with: TextParent.
+			} 
+	|}
+|}
+

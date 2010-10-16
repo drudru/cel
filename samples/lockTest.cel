@@ -1,0 +1,63 @@
+#!/Users/dru/cel/vm/cel
+"
+Test10 Aqua Module
+
+"
+
+{|
+
+	Type   <- 'Aqua Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of wrapper methods'.
+
+	Root <-
+	{|
+		lock <-> 0.
+
+		method: val <+ {
+
+				lock acquire.
+				'pid: ' print.
+				OS getProcessId print.
+				'  ' print.
+
+				OS sleep: 1.
+
+				'val: ' print.	
+				val print.
+				'\n' print.
+				lock release.
+			}.
+
+		Start: name   <+
+			{  | pool <-> 0. x <-> 0. |
+                                " Use the OS kit "
+				Kit import: 'OS'.
+				Kit import: 'Parallel'.
+				Kit import: 'Lock'.
+
+				x: [ 1 2 3 4 5 6 7 8 9 10 11 12 ].
+
+				lock: Lock clone.
+				lock init: '==lock=='.
+
+				pool: (Parallel Process clone).
+				pool init.
+				pool size: 6. 
+
+				x do: { | :i. |
+				   "'i ' print. i print. '\n' print."
+				   pool fork: 'method:' on: self with: i.
+				}.
+
+				pool cleanUp.
+
+				OS exit: 0.
+			} 
+	|}
+
+|}
+
+
+

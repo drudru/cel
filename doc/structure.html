@@ -1,0 +1,91 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (X11; I; FreeBSD 3.4-RELEASE i386) [Netscape]">
+   <title>structure</title>
+</head>
+<body>
+<tt>Ok, this document will describe protos, ints, blobs, atoms,
+slots, and their references.</tt>
+<p><tt>References in the system were Originally 2 bit, now they are 3</tt>
+<p><tt>&nbsp; 0 - PROTO - Data is a reference</tt>
+<br><tt>&nbsp; 1 - INT - Data is actual int</tt>
+<br><tt>&nbsp; 2 - BLOB - Data is a reference</tt>
+<br><tt>&nbsp; 3 - ATOM - Data is a reference</tt>
+<p><tt>New Entries</tt>
+<br><tt>&nbsp; 4 - CODE-PROTO&nbsp;&nbsp;&nbsp; - Data is a reference -
+Describes a proto that holds the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+slots for arguments and locals for a method. This reference is mainly</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+checked by the PASSTHRU cnd CODE routines.</tt>
+<br><tt>&nbsp; 4 - BLOCK-PROTO&nbsp;&nbsp; - Data is a reference - Describes
+a block proto that holds the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+slots for arguments and locals for a block. This reference is for</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+the push instruction so it can easily detect a block that it needs to clone</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(which will become a CODE-PROTO).</tt>
+<br><tt>&nbsp; 5 - CONTEXT-PROTO - Describes an activation record in the
+stack This is necessary for block protos.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Their variables access variables of some other protos via the stack. Therefore,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+the Frame pointer will have to be set to that context.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Upon return, the frame pointer needs to be restored. So, activateSlot will
+just have to set</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+it different, and the previous.</tt>
+<br><tt>&nbsp; 7 - FLOAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Data is a reference</tt>
+<p><tt>ATOMS - Since only 21 bits are allowed in the slot keys, this limits
+us to about 2 million unique</tt>
+<br><tt>strings in the system.</tt>
+<br><tt>INT - Since there are only 29 bits for integers, and they are signed,
+our range is +/- 500 million.</tt>
+<br><tt>Hopefully, that is enough.</tt>
+<p><tt>Arrays and Floats could have special attributes in the proto to
+handle their special cases rather than have a reference. Could have a 'float
+area', for more efficient storage, but using a full proto will be fine
+for now.</tt>
+<p><tt>By going to 3 bit's of data for the reference, the referenced data
+must be on an 8 byte boundary.</tt>
+<p><B>ALIGNMENT</B><tt>Because of this reference structure all objects are
+aligned to 8 bytes. Currently, this is an acceptable chunk size for Linux.
+Windows uses 16 bytes.
+<br>&nbsp;
+<p><B>PROTOS</B><tt>The first 4 bytes is the size of the object and a 
+few bitfields used to describe the GC status of the object.
+There is a field which describes the number of data slots in use and slots
+in use. Data slots are 32 bit fields. Slots are 32 bit fields.</tt>
+<p>In terms of 32 bit values, here is the structure of a proto on the heap.
+<p>0 - Malloc Header/Size - When malloc allocates a block of memory, the
+first 32 bit pointer, in general, is the
+<br>size parameter. It indicates how many bytes are used (with a 16 byte
+alignment, or chunks). We use the lower 4 bits to indicate special properties
+of the proto. The high bit is used for indicating a garbage collection
+marker.
+<br>1 - The size field - This is another field that indicates the allocation
+of the bytes within the proto. The lower 16 bits indicate the number of
+data slots and key slots. This indicates a maximum of 256 data or key slots.
+<p>Later on, we may allow the upper bits to indicate that the object is
+a float or an array (in smalltalk this is called an indexed type).
+<p><tt>&lt;NEED TO DESCRIBE THIS BETTER></tt>
+<p><tt>The first 21 bits are the Atom reference.</tt>
+<br><tt>The next 3 are the Action types</tt>
+<br><tt>Finally, the last 8 bits are for the index into the data slots
+of the data.</tt>
+<p><tt>TYPES OF ACTIONS IN SLOTS 3 bit</tt>
+<br><tt>&nbsp; 0 - GET</tt>
+<br><tt>&nbsp; 1 - SET</tt>
+<br><tt>&nbsp; 2 - GETFRAME</tt>
+<br><tt>&nbsp; 3 - SETFRAME</tt>
+<br><tt>&nbsp; 4 - PASSTHRU</tt>
+<br><tt>&nbsp; 5 - CODE</tt>
+<br><tt>&nbsp; 6 - INTRINSIC</tt>
+<br><tt>&nbsp; 7 - ??</tt>
+</body>
+</html>

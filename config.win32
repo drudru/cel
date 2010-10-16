@@ -1,0 +1,8 @@
+
+cp build.win32 build.sh
+cp vm/Makefile.win32 vm/Makefile 
+cp vm/kitlibs.hseed vm/kitlibs.h
+cp vm/kitlibs.makeseed vm/kitlibs.make
+cp kits/Makefile.win32 kits/Makefile 
+rm -f kits/kitmake.make
+cp kits/Setup.win32 kits/Setup 

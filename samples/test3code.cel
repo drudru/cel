@@ -1,0 +1,30 @@
+
+"
+Test3 Aqua Module
+
+' there be dragons here '
+Please don't edit by hand, thanks :)
+
+"
+
+{|
+
+	Type   <- 'Aqua Module'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCase'.
+
+	Root <-
+	{|
+		x.
+		Start: name   <+
+			{ 
+				setSlot: 'x' with: 5.
+				setSlot: 'y' with: Object clone.
+				setSlot: 'z' with: 'zebra'.
+				x className print.
+				y className print.
+			} 
+	|}
+
+|}
+

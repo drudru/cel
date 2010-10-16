@@ -1,0 +1,68 @@
+#!/Users/dru/cel/vm/cel
+"
+Test9 Aqua Module
+
+"
+
+{|
+
+	Type   <- 'Aqua Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of float methods'.
+
+	Root <-
+	{|
+		x     <-> 5.5.
+		area  <-> 0.
+		z     <-> -25000.
+		pi    <- 3.14159265359.
+		npi   <- -3.14159265359.
+		troll <- 9999999.99.
+		_debugName_ <- 'test9 Root'.
+		
+		Start: name   <+
+			{ 
+				'x = ' print. x print.  '\n\n' print.
+				'z = ' print. z print.  '\n\n' print.
+
+				'A circle of radius 10 has an area of:\n' print.
+                                area: pi * ( 10.0 * 10.0 ).
+				area print.  '\n\n' print.
+
+				area: area / 10.0.
+                                area: area / 10.0.
+				'pi = ' print. area print.  '\n\n' print.
+
+				'(pi asStringWithFormat: "8.2")\n' print.
+				(pi asStringWithFormat: '8.2') print.
+				'\n\n' print.
+
+				'(npi asStringWithFormat: "8.2")\n' print.
+				(npi asStringWithFormat: '8.2') print.
+				'\n\n' print.
+
+				'(troll asStringWithFormat: "10.2")\n' print.
+				(troll asStringWithFormat: '10.2') print.
+				'\n\n' print.
+
+				'10 asFloat: ' print.
+				10 asFloat print. '\n' print.
+				'-10 asFloat: ' print.
+				-10 asFloat print. '\n' print.
+
+				z: x copy.
+				'x = ' print. x print.  '\n\n' print.
+				'z = ' print. z print.  '\n\n' print.
+
+				x: x + 1.0.
+				'x = ' print. x print.  '\n\n' print.
+				'z = ' print. z print.  '\n\n' print.
+
+			} 
+	|}
+
+|}
+
+
+

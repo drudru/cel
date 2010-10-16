@@ -1,0 +1,52 @@
+
+"
+Cel Module - Lock Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'Lock'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		LockParent <- {|
+
+			name <- 'Lock'.
+
+			init: path <+ {
+			   fileName: path.
+			   fd: ( OS openForWrite: fileName).
+			   fd.
+			}.
+
+			acquire <+ {
+			   OS exclusiveLockFd: fd.
+			   fd.
+			}.
+
+			release <+ {
+			   OS unLockFd: fd.
+			   fd.
+			}.
+
+          	|}.
+
+		Lock <- {| fd <-> -1. fileName <-> ''. |}.
+
+		Start: name   <+
+			{ 
+				Kit import: 'OS'.
+
+                                LockParent setSlot: 'parent' with: (Traits Clonable ObjectClass).
+                                (Traits Clonable) setSlot: 'LockParent' with: LockParent.
+				(Globals) setSlot: 'Lock' with: Lock.
+
+	                        Lock setSlot: 'parent' with: LockParent.
+			} 
+	|}
+|}
+

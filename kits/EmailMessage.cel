@@ -1,0 +1,105 @@
+
+"
+Cel Module - EmailMessage Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'EmailMessage'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		EmailMessageParent <- {|
+
+			name <- 'EmailMessage'.
+
+
+			send <+ { | buffer <-> 0. now <-> 0. pipe <-> 0. result <-> 0. i <-> 0. |
+
+				buffer: String clone.
+				buffer setCapacity: 4096.
+
+				" Insure certain fields are here "
+
+				" Need to implement "
+				"date format = Sat, 20 Jan 2001 00:28:51 -0800 (PDT)"
+				"date format = Sat, 2 Jan 2001 00:28:51 -0800 (PDT)"
+
+				now: DateTime now.
+				date: String clone.
+				date append: ((DateTime dayNames at: (now weekDay)) copyFrom: 0 To: 3).
+				date append: ', '.
+				date append: (now day) asString.
+				date append: ' '.
+				date append: ((DateTime monthNames at: (now month)) copyFrom: 0 To: 3).
+				date append: ' '.
+				date append: (now year) asString.
+				date append: ' '.
+				date append: ((now hours) asStringWithFormat: '02').
+				date append: ':'.
+				date append: ((now minutes) asStringWithFormat: '02').
+				date append: ':'.
+				date append: ((now seconds) asStringWithFormat: '02').
+				date append: ' '.
+				i: now timeZoneSecondsOffset.
+				(i < 0) ifTrue: {
+					date append: '-'.
+				} ifFalse: {
+					date append: '+'.
+				}.
+				date append: (((i abs) / 36) asStringWithFormat: '04').
+				date append: ' ('.
+				date append: (now timeZoneName).
+				date append: ')'.
+
+				" Setup the email "
+				buffer append: 'To: '.
+				buffer append: to.
+				buffer append: '\n'.
+				buffer append: 'From: '.
+				buffer append: from.
+				buffer append: '\n'.
+				buffer append: 'Subject: '.
+				buffer append: subject.
+				buffer append: '\n'.
+				buffer append: 'Date: '.
+				buffer append: date.
+				buffer append: '\n'.
+				buffer append: 'X-Mailer: Cel EmailMessage Object'.
+				buffer append: '\n\n'.
+				buffer append: body.
+
+
+				" open a pipe to sendmail (in this case the fake
+				  one that comes with qmail) "
+				pipe: PipeIO clone.
+				pipe runCommand: '/usr/sbin/sendmail -t'.
+
+				pipe writeFrom: buffer.
+				result: pipe close.
+
+				result.
+				}.
+          	|}.
+
+		EmailMessage <- {| to <-> ''. from <-> ''. subject <-> ''. date <-> ''. body <-> ''. |}.
+
+		Start: name   <+
+			{ 
+				Kit import: 'OS'.
+				Kit import: 'PipeIO'.
+				Kit import: 'DateTime'.
+
+                                EmailMessageParent setSlot: 'parent' with: (Traits Clonable ObjectClass).
+                                (Traits Clonable) setSlot: 'EmailMessageParent' with: EmailMessageParent.
+				(Globals) setSlot: 'EmailMessage' with: EmailMessage.
+
+	                        EmailMessage setSlot: 'parent' with: EmailMessageParent.
+			} 
+	|}
+|}
+

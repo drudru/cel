@@ -1,0 +1,36 @@
+
+"
+Base Aqua Module - it needs to have a Point object
+
+"
+
+{|
+
+	Type      <- 'Aqua Module'.
+	Name      <- 'Base'.
+	Version   <- 1.0.
+	DependsOn.
+    	Author    <- 'Dru Nelson'.
+	URL       <- 'http://www.redwoodsoft.com/aqua'.
+
+	Root <-
+	{|
+		PointClass  <- {|
+				+ pt <+ { x: x + (pt x). y: y + (pt y).}
+			   |}.
+
+		Point <- {| x <-> 0. y <-> 0. |}.
+
+		Start: name   <+
+			{ 
+				(Lobby Traits Clonable) setSlot: 'PointClass' with: PointClass.
+				(Lobby Globals) setSlot: 'Point' with: Point.
+
+				Point setSlot: 'parent' with: PointClass.
+
+				true.
+			} 
+	|}
+
+|}
+

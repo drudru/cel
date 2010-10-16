@@ -1,0 +1,10 @@
+#!/bin/sh
+cp build.unix build.sh 
+chmod +x build.sh
+cp vm/Makefile.unix vm/Makefile 
+cp vm/kitlibs.hseed vm/kitlibs.h
+cp vm/kitlibs.makeseed vm/kitlibs.make
+cp kits/Makefile.unix kits/Makefile 
+rm -f kits/kitmake.make
+cp kits/Setup.unix kits/Setup 
+

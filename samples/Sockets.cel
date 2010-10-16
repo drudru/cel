@@ -1,0 +1,73 @@
+
+"
+Cel Module - Point Object - it needs to have a Point object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'Socket'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+    	Author    <- 'Dru Nelson'.
+    	Date      <- '2000/12/30'.
+	URL       <- 'http://www.redwoodsoft.com/cel'.
+
+	Root <-
+	{|
+		SocketClass <- {|
+
+				setHost
+				setPort
+				open - calls the low level open, which will change the state
+				close - calls the low level close, which will change the state
+				read - calls low level return a string, a string of size 0 indicates endoffile
+				write - calls low level send a string, a return indicates bytes written
+
+				" Make a new point and make it contain the sum
+				  of the other points "
+				+ pt <+ { | t <-> 0. z. |
+				          t: Point clone.
+				          t x: x + (pt x).
+					  t y: y + (pt y).
+					  t print.
+					  t.
+					}.
+				" This isn't implemented in the compiler yet. KeywordSlot
+				do: pt this: pt2 <+ { | t <-> 0. z. |
+				          t: Point clone.
+				          t x: x + (pt x).
+					  t y: y + (pt2 y).
+					  t print.
+					  t.
+					}.
+                                "
+
+				className <- 'SocketClass'.
+				print <+ { | zeta. | 'x = ' print. x print. ' y = ' print. y print. '\n' print. }.
+				super <- 'ObjectClass'.
+				_debugName_ <- 'PointClass'.
+			   |}.
+
+		Socket <- {| fd <-> 0.
+		             state <-> 0.
+		             _debugName_ <-> 'Socket'.
+		             host <-> ''.
+		             port <-> 0.
+			|}.
+
+		Start: name   <+
+			{ 
+				SocketClass setSlot: 'parent' with: (Traits Clonable ObjectClass).
+				(Traits Clonable) setSlot: 'SocketClass' with: SocketClass.
+				(Globals) setSlot: 'Socket' with: Socket.
+
+				Socket setSlot: 'parent' with: SocketClass.
+
+				true.
+			} 
+	|}
+
+|}
+

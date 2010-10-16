@@ -1,0 +1,147 @@
+
+"
+Cel Module - CGI Object
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'CGI'.
+	Version   <- 1.0.
+	DependsOn <- 'Object'.
+
+	Root <-
+	{|
+		CGIParent <- {|
+
+			name <- 'CGI'.
+
+			setup  <+ { 
+					buffer: String clone.
+					buffer setCapacity: 4096.
+					environment: Capsule environment.
+					(environment hasSlot: 'QUERY_STRING') ifTrue: {
+						parseQuery.
+					}.
+					hasCookie: false.
+					(environment hasSlot: 'HTTP_COOKIE') ifTrue: {
+						parseCookies.
+					}.
+					setCookies: Object clone.
+					setCookies removeSlot: 'parent'.
+				}.
+
+			parseQuery <+ { | tmp <-> 0. tmp2 <-> 0. go <-> 0. |
+					tmp: environment QUERY_STRING.
+					(tmp size = 0) ifFalse: {
+					  params: Object clone.
+					  params removeSlot: 'parent'.
+					  tmp2: (tmp splitOn: '&').
+
+					  // Check if it's an ISMAP request '?123,345'
+					  go: true.
+					  (tmp2 size = 1) ifTrue: {
+					     (((tmp2 at: 0) findLast: ',') isNil) ifFalse: {
+					       go: false.
+					       tmp2: ((tmp2 at: 0) splitOn: ',').
+					       params setSlot: 'x' with: (tmp2 at: 0).
+					       params setSlot: 'y' with: (tmp2 at: 1).
+					     }.
+					  }.
+					  go ifTrue: {
+					    tmp2 do: { | :p. i <-> 0. param <-> 0. val <-> 0. |
+					      i: (p splitOn: '=').
+					      param: (i at: 0).
+					      val:   (i at: 1).
+
+					      "Replace + with space - an efficient intrinsic"
+					      "Replace %xx with value - an efficient intrinsic"
+					      "String always gets shorter or the same/I don't"
+					      "Have an atoi or itoa routine, therefore an intrinsic"
+					      "For string is in order"
+					      val: val urlUnEscape.
+
+					      params setSlot: param with: val.
+					    }.
+					  }.
+					}.
+				}.
+
+			parseCookies <+ { | tmp <-> 0. tmp2 <-> 0. |
+					tmp: environment HTTP_COOKIE.
+					(tmp size = 0) ifFalse: {
+					  hasCookie: true.
+					  cookies: Object clone.
+					  cookies removeSlot: 'parent'.
+					  tmp2: (tmp splitOn: '; ').
+					  tmp2 do: { | :p. i <-> 0. param <-> 0. val <-> 0. |
+					    i: (p splitOn: '=').
+					    param: (i at: 0).
+					    val:   (i at: 1).
+
+					    "Unquote the value"
+					    val: (val removeChar: '"').
+
+					    cookies setSlot: param with: val.
+					  }.
+					}.
+				}.
+
+			setCookie: name with: val <+ {
+			                " **** Need to validate to RFC2068 that illegal 
+					  characters aren't in here"
+			                setCookies setSlot: name with: val.
+					hasCookie: true.
+				}.
+
+			writeFrom: buff <+ {
+					buffer append: buff.
+				}.
+
+			close <+ { | tmp <-> 0. slots <-> 0. |
+                                    tmp: String clone.
+				    tmp append: 'Content-type: '. 
+				    tmp append: contentType.
+				    tmp append: '\nStatus: '. 
+				    tmp append: (status asString).
+				    tmp append: '\n'.
+				    (noCache = 1) ifTrue: {
+					    tmp append: 'Pragma: no-cache\n'. 
+					    tmp append: 'Cache-control: no-cache\n'.
+				    }.
+				    slots: (setCookies slotNames).
+				    slots do: { | :i. |
+				         tmp append: 'Set-Cookie: '. 
+					 tmp append: i.
+					 tmp append: '="'.
+					 tmp append: (setCookies getSlot: i).
+					 tmp append: '";Version="1"\n'. 
+				    }.
+				    tmp append: '\n'.
+                                    
+                                    OS writeFd: 1 From: tmp. 
+                                    OS writeFd: 1 From: buffer. 
+				    OS close: 1.
+				}.
+
+          	|}.
+
+		CGI <- {| buffer <-> ''. contentType <-> 'text/html'. status <-> 200.
+			  params <-> { }. environment <-> ''.  noCache <-> 1. 
+			  cookies <-> { }. hasCookie <-> 0. setCookies <-> { }.
+		        |}.
+
+		Start: name   <+
+			{ 
+				Kit import: 'OS'.
+
+                                CGIParent setSlot: 'parent' with: (Traits Clonable ObjectClass).
+                                (Traits Clonable) setSlot: 'CGIParent' with: CGIParent.
+				(Globals) setSlot: 'CGI' with: CGI.
+
+	                        CGI setSlot: 'parent' with: CGIParent.
+			} 
+	|}
+|}
+

@@ -1,0 +1,176 @@
+
+"
+Cel Module - Array Object - some methods for the array object
+
+This is a special module, one that doesn't have a Start.
+Why? I just wanted to get this into the runtime without
+implementing these methods in C / svm32 assembly.
+
+"
+
+{|
+
+	Type      <- 'Cel Module'.
+	Name      <- 'Array'.
+	Version   <- 1.0.
+
+	Root <-
+	{|
+		type      <- 'Array'.
+		className <- 'Array'.
+
+		print <+ { | i <-> 0. |
+
+			   i: asString.
+
+			   i print.
+                         }.
+
+		asString <+ { | i <-> 0. tmp <-> 0. |
+
+			   tmp: String clone.
+
+			   tmp append: '[ '.
+			   { i < size } whileTrue: {
+			   	tmp append: ((at: i) asString).
+				tmp append: ' '.
+				i: i + 1.
+			   }.
+			   tmp append: ']'.
+                         }.
+
+		do: b <+ { | i <-> 0. |
+
+			   { i < size } whileTrue: {
+			   	b value: (at: i).
+				i: i + 1.
+			   }.
+                         }.
+                
+		perform: mesg <+ { | i <-> 0. |
+			   { i < size } whileTrue: {
+			   	(at: i) perform: mesg.
+				i: i + 1.
+			   }.
+                         }.
+                
+		perform: mesg with: arg <+ { | i <-> 0. |
+			   { i < size } whileTrue: {
+			   	(at: i) perform: mesg with: arg.
+				i: i + 1.
+			   }.
+                         }.
+                
+		select: block <+ { | i <-> 0. tmp <-> 0. |
+		           tmp: Array new.
+			   { i < size } whileTrue: {
+			   	(block value: (at: i)) ifTrue: {
+				   tmp append: (at: i).
+				}.
+				i: i + 1.
+			   }.
+			   tmp.
+                         }.
+                
+		reject: block <+ { | i <-> 0. tmp <-> 0. |
+		           tmp: Array new.
+			   { i < size } whileTrue: {
+			   	(block value: (at: i)) ifFalse: {
+				   tmp append: (at: i).
+				}.
+				i: i + 1.
+			   }.
+			   tmp.
+                         }.
+                
+		first <+ { 
+			   at: 0.
+                         }.
+                
+		last <+ { 
+			   at: (size - 1).
+                         }.
+
+		appendAll: b <+ {
+			   b do: { | :i |
+				append: i.
+			   }.
+                         }.
+
+		includes: a <+ { | result <-> 0. |
+				result: false.
+				do: { | :i |
+					(i = a) ifTrue: {
+						result: true.
+					}.
+				}.
+				result.
+			}.
+
+		removeDuplicates <+ { | i <-> 0. x <-> 0. last <-> 0. |
+			   (size > 0) ifTrue: {
+				   last: (at: 0).
+				   i: 1.
+				   { i < size } whileTrue: {
+					x: (at: i).
+					(last = x) ifTrue: {
+						removeAt: i.
+					} ifFalse: {
+						last: x.
+						i: i + 1.
+					}.
+				   }.
+			   }.
+                         }.
+
+
+		intersectionWith: b <+ { | result <-> 0. |
+			   result: Array new.
+			   b do: { | :i |
+				(includes: i) ifTrue: {
+				  result append: i.
+				}.
+			   }.
+			   result.
+                         }.
+
+
+		sortIncs <- [ 1391376 463792 198768 86961 33936
+                              13776 4592 1968 861 336
+                              112 48 21 7 3 1 ].
+
+		sort <+ { | k <-> 0. i <-> 0. h <-> 0. v <-> 0. j <-> 0.|
+
+		           " DRUDRU - Need to get a return statement "
+		           (size = 0) ifFalse: {
+			   { k < 16 } whileTrue: { 
+			     "'k = ' print. k print. '\n' print."
+                             h: (sortIncs at: k).
+			     "'h = ' print. h print. '\n' print."
+                             i: h.
+			     "The following print causes an interesting 
+			      infinite loop"
+			     "print. '\n' print."
+			     { i <= (size - 1) } whileTrue: {
+			        "'i = ' print. i print. '\n' print."
+			        v: (at: i).
+				j: i.
+			        { (j >= h) and: { (at: (j - h)) > v } } whileTrue: {
+					at: j Put: (at: (j - h)).
+					j: j - h.
+				   }.
+				at: j Put: v.
+                                i: i + 1.
+			     }.
+
+			     k: k + 1.
+			   }.
+			   }.
+
+			   " DRUDRUDRU - BUG - NEED TO RETURN SELF HERE "
+
+			}.
+	|}
+|}
+
+

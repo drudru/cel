@@ -1,0 +1,50 @@
+#!/Users/dru/cel/vm/cel
+"
+Test9 Aqua Module
+
+"
+
+{|
+
+	Type   <- 'Aqua Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of float methods'.
+
+	Root <-
+	{|
+		t     <-> 0.
+		f     <-> 0.
+		
+		Start: name   <+
+			{ 
+
+                                'True print: ' print. true print. '\n\n' print.
+                                'False print: ' print. false print. '\n\n' print.
+
+				t: true.
+				f: false.
+
+				't and: f  print: ' print.
+				(t and: { ' false evaled ' print. f. }) print.
+				'\n\n' print.	
+
+				't and: t  print: ' print.
+				(t and: { ' true evaled ' print. t. }) print.
+				'\n\n' print.	
+
+				'f and: t  print: ' print.
+				(f and: { ' true evaled ' print. t. }) print.
+				'\n\n' print.	
+
+				'f and: f  print: ' print.
+				(f and: { ' false evaled ' print. f. }) print.
+				'\n\n' print.	
+
+			} 
+	|}
+
+|}
+
+
+

@@ -1,0 +1,58 @@
+
+"
+Test7 Aqua Module
+
+"
+
+{|
+
+	Type   <- 'Aqua Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of point methods'.
+
+	Root <-
+	{|
+		x <-> 5.
+		d <-> 0.
+		z <-> 0.
+		_debugName_ <- 'test7 Root'.
+		Start: name   <+
+			{ 
+				Kit import: 'Point'.
+				z: Point clone.
+				'z class = ' print.
+				z className print.
+				z _debugName_: 'Test7 Point'.
+				z x: 1.
+				z y: 2.
+				'\n\n' print.
+
+				x: 5 @ 10.
+				'x class = ' print.
+				x className print.
+				x _debugName_: 'Test7 Point'.
+				'\n\n' print.
+				x print.
+				'\n\n' print.
+
+				Point objectShallowDump.
+				Traits Clonable  objectShallowDump.
+				Traits Clonable PointClass  objectShallowDump.
+				'Dru0\n' print.
+				d: z + x.
+				'\n\n' print.
+				'Dru1\n' print.
+				d objectShallowDump.
+				'Dru2\n' print.
+				d print.
+				'\n\n' print.
+
+
+			} 
+	|}
+
+|}
+
+
+

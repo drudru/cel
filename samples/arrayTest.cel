@@ -1,0 +1,135 @@
+#!/Users/dru/cel/vm/cel
+"
+
+Cel ArrayTest Program
+
+"
+
+{|
+	Type   <- 'Cel Application'.
+    	Author <- 'Dru Nelson'.
+	URL    <- 'http://www.redwoodsoft.com/testCases'.
+	Info   <- 'test of arrays'.
+
+	Root <-
+	{|
+		zork <-> ['zork' 1 2 3 4 0 9 8 5 7 345 'glarb' ].
+		bork <-> 'gloink'.
+		mule <-> ''.
+
+		zaboo <+ { | result <-> [ ]. | 
+			result append: 1.
+			result.
+			}.
+
+		zazoo <+ { | result <-> [ ]. | 
+			result: Array new.
+			result append: 1.
+			result.
+			}.
+
+
+		Start: name   <+
+			{ 
+				zork print.
+				'\n' print.
+				zork size print. 
+				'\n' print.
+
+				zork append: bork.
+
+				zork print.
+				'\n' print.
+				zork size print. 
+				'\n' print.
+
+				zork last print.
+				'\n' print.
+
+				zork removeAt: (zork at: 3).
+
+				zork print. '\n' print.
+				zork size print.  '\n' print.
+
+				zork print. '\n' print.
+				zork sort.
+				zork print. '\n' print.
+
+				zork print. '\n' print.
+				zork sort.
+				zork print. '\n' print.
+
+				zork print. '\n' print.
+				zork size print.  '\n' print.
+
+				[ 9 8 3 4 6 9 8 3 4 55 33 ] print. '\n' print.
+
+				[ 9 8 3 4 6 9 8 3 4 55 33 ] objectDump. '\n' print.
+				" Bug - sort doesn't return the self. So this causes a weird bug. "
+				"([ 9 8 3 4 6 9 8 3 4 55 33 ] sort) print. '\n' print."
+				bork: [ 9 8 3 4 6 9 8 3 4 55 33 ].
+				bork sort.
+				bork print. '\n' print.
+
+				bork: [ 9 8 3 4 6 9 8 3 4 55 33 ].
+				zork: [ 13603 19559 9 6 9885 4535 28481 5649 ].
+				bork appendAll: zork.
+				bork sort.
+				bork print. '\n' print.
+				bork removeDuplicates.
+				bork print. '\n' print.
+
+				bork: [ 5 5 5 5 ].
+				bork print. '\n' print.
+				bork removeDuplicates.
+				bork print. '\n' print.
+
+				bork: [ 1 2 3 4 5 ].
+				bork print. '  Select \n' print.
+				mule: (bork select: { | :i | i < 3. }).
+				mule print. '\n' print.
+
+				bork: [ 1 2 3 4 5 ].
+				bork print. '  Reject \n' print.
+				mule: (bork reject: { | :i | i < 3. }).
+				mule print. '\n' print.
+
+				bork: [ ].
+				bork print. '\n' print.
+				bork removeDuplicates.
+				bork print. '\n' print.
+
+				bork: zaboo.
+				bork print. '\n' print.
+				bork: zaboo.
+				bork print. '\n' print.
+				bork: zaboo.
+				bork print. '\n' print.
+
+				'Intersection Test\n' print.
+				'-=-=-=-=-=-=-=-=-\n' print.
+				bork: [ 9 8 3 4 6 9 8 3 4 55 33 ].
+				zork: [ 13603 19559 9 6 9885 4535 28481 5649 ].
+				bork print. '\n' print.
+				zork print. '\n' print.
+				bork: (bork intersectionWith: zork).
+				bork print. '\n' print.
+				'-=-=-=-=-=-=-=-=-\n' print.
+
+				'\n' print.
+				'\n' print.
+				bork: zazoo.
+				bork print. '\n' print.
+				bork: zazoo.
+				bork print. '\n' print.
+				bork: zazoo.
+				bork print. '\n' print.
+
+				
+			} 
+	|}
+
+|}
+
+
+

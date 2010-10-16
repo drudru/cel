@@ -1,0 +1,96 @@
+#!/Users/dru/cel/vm/cel
+"
+
+Cel Meta Test Program
+
+"
+
+{|
+	Type   <- 'Cel Application'.
+    	Author <- 'Dru Nelson'.
+    	What   <- 'Cel Meta Test Program'.
+
+	Root <-
+	{|
+
+		Start: name   <+
+			{ | zilbar <-> { }. zork <-> ''.
+			    i <-> 0.
+			    trueBin <-> 0. falseBin <-> 0.
+			    
+			  |
+			        Kit import: 'Random'.
+
+				'[0 - 3]   ' print.
+				(Random integerInRange: [0 3]) print. ' ' print.
+				(Random integerInRange: [0 3]) print. ' ' print.
+				(Random integerInRange: [0 3]) print. ' ' print.
+				(Random integerInRange: [0 3]) print. '\n' print.
+
+				'[-5 - 5]   ' print.
+				(Random integerInRange: [-5 5]) print. ' ' print.
+				(Random integerInRange: [-5 5]) print. ' ' print.
+				(Random integerInRange: [-5 5]) print. '\n' print.
+
+				'[0 - 1]   ' print.
+				(Random integerInRange: [0 1]) print. ' ' print.
+				(Random integerInRange: [0 1]) print. ' ' print.
+				(Random integerInRange: [0 1]) print. '\n' print.
+
+				Random seed.
+
+				'[0 - 3]   ' print.
+				(Random integerInRange: [0 3]) print. ' ' print.
+				(Random integerInRange: [0 3]) print. ' ' print.
+				(Random integerInRange: [0 3]) print. ' ' print.
+				(Random integerInRange: [0 3]) print. '\n' print.
+
+				'[-5 - 5]   ' print.
+				(Random integerInRange: [-5 5]) print. ' ' print.
+				(Random integerInRange: [-5 5]) print. ' ' print.
+				(Random integerInRange: [-5 5]) print. '\n' print.
+
+				'[0 - 1]   ' print.
+				(Random integerInRange: [0 1]) print. ' ' print.
+				(Random integerInRange: [0 1]) print. ' ' print.
+				(Random integerInRange: [0 1]) print. '\n' print.
+
+
+				i: 0. trueBin: 0. falseBin: 0.
+				{ i < 1000 } whileTrue: {
+				    i: i + 1.
+				    (Random uniformProbability: 0.6) ifTrue: {
+				      trueBin: (trueBin + 1).
+				    } ifFalse: {
+				      falseBin: (falseBin + 1).
+				    }.
+				}.
+
+				'Bins: for 0.6 - 1000 times ' print. 
+				'true  - ' print. trueBin print.
+				'    ' print.
+				'false - ' print. falseBin print.
+				'\n\n' print.
+
+
+
+				i: 0. trueBin: 0. falseBin: 0.
+				{ i < 1000 } whileTrue: {
+				    i: i + 1.
+				    (Random uniformProbability: 0.01) ifTrue: {
+				      trueBin: (trueBin + 1).
+				    } ifFalse: {
+				      falseBin: (falseBin + 1).
+				    }.
+				}.
+
+				'Bins: for 0.01 - 1000 times ' print. 
+				'true  - ' print. trueBin print.
+				'    ' print.
+				'false - ' print. falseBin print.
+				'\n\n' print.
+
+			} 
+	|}
+|}
+
