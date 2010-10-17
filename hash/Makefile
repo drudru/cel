@@ -1,5 +1,5 @@
 
-CFLAGS =  -g -O2 -Wall -fno-omit-frame-pointer
+CFLAGS = -m32 -g -O2 -Wall -fno-omit-frame-pointer
 
 #.cc.o:
 #	gcc $(CFLAGS) -c $<

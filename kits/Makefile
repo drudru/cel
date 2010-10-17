@@ -10,7 +10,7 @@
 #
 
 #CFLAGS= -I../hash -I../vm -g -Wall -fPIC -O2 -fno-omit-frame-pointer
-CFLAGS= -I../hash -I../vm -g -Wall -O2 -fno-omit-frame-pointer
+CFLAGS= -m32 -I../hash -I../vm -g -Wall -O2 -fno-omit-frame-pointer
 
 ifdef PROFILE
 CFLAGS += -pg
@@ -56,6 +56,6 @@ clean:
 reallyclean:
 	rm *.[oa] *.depend *~
 
-backup:
-	tar cvf /dev/fd0.1440 *.[mh] Makefile build
+#backup:
+#	tar cvf /dev/fd0.1440 *.[mh] Makefile build
 

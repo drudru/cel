@@ -9,7 +9,7 @@
 # 	     08/09/98  Made use of for bubl vm
 #
 
-CFLAGS= -g -O2 -fno-omit-frame-pointer -Wall -I../hash -L/usr/local/lib 
+CFLAGS= -m32 -g -O2 -fno-omit-frame-pointer -Wall -I../hash -L/usr/local/lib 
 
 
 ifdef PROFILE
@@ -50,6 +50,6 @@ clean:
 reallyclean:
 	rm *.[oa] *.depend *~
 
-backup:
-	tar cvf /dev/fd0.1440 *.[mh] Makefile build
+#backup:
+#	tar cvf /dev/fd0.1440 *.[mh] Makefile build
 
