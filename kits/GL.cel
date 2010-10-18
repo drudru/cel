@@ -1,0 +1,60 @@
+
+{|
+
+	Type      <- 'Cel Module'.
+
+	Root <-
+	{|
+		GL <- {|
+
+			name <- 'GL'.
+
+
+			Constants <- {|
+
+				GL_POINTS         <-  0.
+				GL_LINES          <-  1.
+				GL_LINE_LOOP      <-  2.
+				GL_LINE_STRIP     <-  3.
+				GL_TRIANGLES      <-  4.
+				GL_TRIANGLE_STRIP <-  5.
+				GL_TRIANGLE_FAN   <-  6.
+				GL_QUADS          <-  7.
+				GL_QUAD_STRIP     <-  8.
+				GL_POLYGON        <-  9.
+
+				GLUT_DOWN	  <-    0.
+				GLUT_UP		  <-    1.
+
+				GLUT_LEFT_BUTTON	<-    0.
+				GLUT_MIDDLE_BUTTON	<-    1.
+				GLUT_RIGHT_BUTTON	<-    2.
+
+			|}.
+
+			" the low and high are inclusive "
+			integerBetween: l and: h <+ {
+			   |
+			     a      <-> 0.
+			     result <-> 0.
+			   |
+
+			   a: Array new.
+
+			   a append: l. a append: h.
+			   result: (integerInRange: a).
+			   result.
+			}.
+
+		   |}.
+
+		Start: name   <+
+			{ 
+				Kit importLib: GL.
+				(Globals) setSlot: 'GL' with: GL.
+				true.
+			} 
+	|}
+
+|}
+

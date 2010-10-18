@@ -1,0 +1,81 @@
+{|
+	Type   <- 'Cel Application'.
+
+	Root <-
+	{|
+		xRot <-> 0.0.
+		data <-> 0.
+		idleOn <-> 0.
+
+		idle <+ {
+			  xRot: xRot + 0.5.
+			  GL glutPostRedisplay.
+			}.
+
+		display <+
+			{  | i <-> 0. |
+				GL glClear.
+				GL glModelViewMatrix.
+				GL glLoadIdentity.
+				GL glTranslateX: 0.0 Y: 0.0 Z: -13.0.
+				GL glRotateAngle: xRot X: 0.0 Y: 1.0 Z: 0.0.
+				GL glutWireCube: 3.0.
+				GL glutSwapBuffers.
+			}.
+
+		keyboardKey: key X: x Y: y <+
+			{  | i <-> 0. |
+			   'key = ' print.
+			   key print.
+			   '\n\n' print.
+			   (key = 'a') ifTrue: {
+			      xRot: xRot + 3.0.
+			      GL glutPostRedisplay.
+			   }.
+			   (key = 's') ifTrue: {
+			      xRot: xRot - 3.0.
+			      GL glutPostRedisplay.
+			   }.
+			   (key = '\x1b') ifTrue: {
+			      OS exit: 0.
+			   }.
+			   (key = 'i') ifTrue: {
+			      (idleOn) ifTrue: {
+				 idleOn: false.
+				 GL glutIdleDelegate: false withMethod: false.
+			      } ifFalse: {
+				 idleOn: true.
+				 GL glutIdleDelegate: self withMethod: 'idle'.
+			      }.
+			   }.
+			  'key done\n' print.
+			}.
+
+		Start: name   <+
+			{
+				|
+				buff <-> 0. file <-> 0.lines <-> 0.
+				| 
+				Kit import: 'GL'.
+				Kit import: 'OS'.
+
+				idleOn: false.
+				data: Array new.
+
+				GL glutInitDisplay.
+				GL glutSetWindowWidth: 350 Height: 350.
+				GL glutSetWindowX: 350 Y: 350.
+				GL glutCreateWindowNamed: 'Cel Glut'.
+
+				GL glProjectionMatrix.
+				GL gluPerspectiveAngle: 53 Aspect: 1.0 zNear: 10 zFar: 25.0.
+				GL glColorR: 0.0 G: 1.0 B: 0.0.
+
+				GL glutDisplayDelegate: self withMethod: 'display'.
+				GL glutKeyboardDelegate: self withMethod: 'keyboardKey:X:Y:'.
+
+				GL glutMainLoop.
+			} 
+	|}
+
+|}
