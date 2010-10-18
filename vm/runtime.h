@@ -216,7 +216,7 @@ uint32 objectDeleteSlot(Proto proto, Atom key);
 // This returns a pointer to the data - this only works on blobs
 void *  objectPointerValue(Proto proto);
 
-uint32    objectIntegerValue(Proto proto);
+int    objectIntegerValue(Proto proto);
 
 // Return the value of a float object
 double objectFloatValue (Proto proto);
@@ -359,6 +359,14 @@ void intrinsicGetSlot (void);
 // Remove the slot
 
 void intrinsicRemoveSlot (void);
+
+// Arguments: target 'copySlotsFrom:' proto
+// Return: target
+// Notes:
+// Copies the slots from the proto argument
+
+void intrinsicCopySlotsFrom (void);
+
 
 // Arguments: target 'perform:' slotName
 // Return: slot or method's contents
@@ -699,6 +707,11 @@ void intrinsicStringPrint(void);
 // Notes:
 // Creates a new string that is the concatenation of the target and the argument
 void intrinsicStringAdd(void);
+
+// Arguments: target 'clear' position
+// Return: the cleared string
+// Notes:
+void intrinsicStringClear(void);
 
 // Arguments: target 'at:' position
 // Return: the character literal at that position

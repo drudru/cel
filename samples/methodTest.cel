@@ -59,6 +59,15 @@ Cel Meta Test Program
 
 				= 'zap'.
 
+
+				'\n\n' print.
+				'Following using self:\n' print.
+				self kaplow2: 'X' with: 'Y'.
+				'\n' print.
+				'Should Equal:\n' print.
+				'kaplow!!!X!!   & Y!!\n' print.
+				'\n\n\n' print.
+
 			} 
 	|}
 |}

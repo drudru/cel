@@ -116,7 +116,7 @@ inline void DoNothing(VM32Cpu * cpu) {
 
 
 // this calls activateSlot
-inline void Call (VM32Cpu * cpu)
+inline void DoCall (VM32Cpu * cpu)
 {
     cpu->pc++;			// Increment the program counter
     push(cpu,cpu->pc);		// Push the PC so upon return it executes the next
@@ -167,11 +167,13 @@ inline void DoReturn(VM32Cpu * cpu) {
     
 
     // Get the operand
+    // The operand specifies how much stack to unwind
+    // (all of the parameters used to setup the call by
+    //  the caller)
     cpu->pc++;
     ip = (int *) cpu->pc;
-    cpu->pc += 4;
-    
     j = std2hostInteger(*ip);
+    cpu->pc += 4;
 
     // Now place the return value in position and move the pc
     // and adjust the stack to that position
@@ -181,9 +183,16 @@ inline void DoReturn(VM32Cpu * cpu) {
     returnVal = *stack;
     stack++;			// Point at the preserved code-proto ptr
     stack++;			// Point at the preserved parent-local
-//    cpu->selfReg = *stack;	// Restore the selfReg
     stack++;			// Point at the return program counter
     cpu->pc = *stack;		// Set the program counter
+    // A return PC of 0x01 is a sentinel for a C callback
+    // Therefore, this return should halt the VMRun loop and do a C level
+    // return
+    stack++;			// Point at the arg count
+    if (*stack > 0x200) {
+       cpu->haltflag = 1;
+    }
+    stack--;			// Point at the arg count
     
     stack = stack + j;		// Now point at where the return value should go
     *stack = returnVal;		// Put the value there
@@ -422,26 +431,37 @@ void DefaultInvalidArgCount(VM32Cpu * cpu) {
 
 void init (VM32Cpu * cpu) 
 {
-	reset(cpu);
-	cpu->breakHook = DefaultBreak;
-	cpu->invalidHook = DefaultInvalidInstruction;
+	VMReset(cpu);
+	cpu->breakHook    = DefaultBreak;
+	cpu->invalidHook  = DefaultInvalidInstruction;
 	cpu->argCountHook = DefaultInvalidArgCount;
-	cpu->pushHook = NULL;
+	cpu->pushHook     = NULL;
+	cpu->activateHook = NULL;
 }
 
-void reset (VM32Cpu * cpu) 
+void VMReset (VM32Cpu * cpu) 
 {
 	cpu->pc = cpu->sp = cpu->fp = 0;
 	cpu->haltflag = 0;
-	cpu->cc = CC_ZERO;
 }
 
-int run (VM32Cpu * cpu) 
+void VMRun (VM32Cpu * cpu, unsigned int startWithCall) 
 {
+    // This is necessary for some callback systems. We
+    // Sometimes we just want to setup the stack and 
+    // have a call go. If we didn't have this, we
+    // would have to setup a place in memory for a 
+    // call opcode followed by a return
+    if (startWithCall) {
+        // Notice that we don't increment the program counter
+        cpu->activateHook();
+    }
     while (!cpu->haltflag) {
 	singleStep(cpu);
     }
-    return 0;
+
+    // Reset the haltflag
+    cpu->haltflag = 0;
 }
 
 int singleStep (VM32Cpu * cpu)
@@ -459,7 +479,7 @@ int singleStep (VM32Cpu * cpu)
 	    break;
 	case 0x01: DoNothing(cpu);
 	    break;
-	case 0x02: Call(cpu);
+	case 0x02: DoCall(cpu);
 	    break;
 	case 0x03: DoPushZero(cpu);
 	    break;
@@ -525,6 +545,64 @@ inline void VMReturn(VM32Cpu * cpu, unsigned int returnValue, unsigned int moveC
     
     // Now set the vm stack pointer
     cpu->sp = (unsigned int) stack;
+}
+
+// Setup a call 
+void VMSetupCall (VM32Cpu * cpu, unsigned int obj, unsigned int mesg) 
+{
+    // This 'primes the pump' for a call to activateSlot.
+    // We push the context and then activateSlot, this activates the _Start
+    // method. This is a 'passthru'. As such, an activate to it will just
+    // setup the FP and Parent pointer (to the target) and then set the
+    // PC (Program Counter) to the proper code routine.
+    // Then the cpu will have to do more..
+
+
+    // Push the parent-local (true-target)
+    //push(pcpu, (uint32) nil);
+    // Push the code-proto pointer
+    //push(pcpu, (uint32) nil);
+
+    // Push to preserve FP
+    //push(pcpu, cpu->fp);
+
+    // Setup the fp
+    // pcpu->fp = pcpu->sp;
+
+    // The FP gets preserved with the setupFrame that will occur
+    // in the new activateion
+    // The PC gets preserved on the stack below
+
+    push(cpu, mesg);
+    push(cpu, obj);
+    // Note: this is special
+    push(cpu,  0x419 );       // The Argument count
+    // (((0x80 | 0x3) << 3) | 0x1)
+    // Essentially an indicator/sentinel that 
+    // the DoReturn should end
+    push(cpu, cpu->pc);
+}
+
+
+// Setup a call 
+void VMSetupCallWithArgs (VM32Cpu * cpu, unsigned int obj, unsigned int mesg, unsigned int num, unsigned int * pArray) 
+{
+    int i;
+    // See above for the big description
+
+    i = num;
+
+    while (i) {
+       i--;
+       push(cpu, pArray[i]);
+    }
+
+    push(cpu, mesg);
+    push(cpu, obj);
+    // Note: mind the sentinel, this is a special frame
+    // see above.
+    push(cpu,  ((((3 + num) | 0x80) << 3) | 1) );
+    push(cpu, cpu->pc);
 }
 
 

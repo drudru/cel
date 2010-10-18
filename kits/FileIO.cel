@@ -37,6 +37,8 @@ Cel Module - FileIO Object
 					tmp: String clone.
 					tmp setCapacity: 4096.
 
+					buff clear.
+
 					{ (OS readFd: fd Into: tmp Size: 4096) > 0 } whileTrue: {
 						buff append: tmp.
         	                        }.

@@ -47,6 +47,32 @@ implementing these methods in C / svm32 assembly.
 			   }.
                          }.
                 
+		from: start To: end Do: b <+ { | i <-> 0. realEnd <-> 0. |
+
+			   i: start.
+			   ( i < size ) ifTrue: {
+				realEnd: end.
+				(realEnd > size) ifTrue: {
+				        realEnd: size.
+				}.
+				{ i < realEnd } whileTrue: {
+					b value: (at: i).
+					i: i + 1.
+				}.
+			   }.
+                         }.
+                
+		from: start Do: b <+ { | i <-> 0.  |
+
+			   i: start.
+			   ( i < size ) ifTrue: {
+				{ i < size } whileTrue: {
+					b value: (at: i).
+					i: i + 1.
+				}.
+			   }.
+                         }.
+                
 		perform: mesg <+ { | i <-> 0. |
 			   { i < size } whileTrue: {
 			   	(at: i) perform: mesg.
@@ -90,6 +116,11 @@ implementing these methods in C / svm32 assembly.
 		last <+ { 
 			   at: (size - 1).
                          }.
+
+		removeLast <+ { 
+			   removeAt: (size - 1).
+                         }.
+
 
 		appendAll: b <+ {
 			   b do: { | :i |

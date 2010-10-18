@@ -1,0 +1,47 @@
+
+{|
+	Root <-
+	{|
+		MinMaxParent <- {|
+
+			type <- 'MinMax'.
+
+			tryMin: n <+
+			 {
+			   (n < min) ifTrue: {
+ 				min: n. 
+			   }.
+			 }.
+
+			tryMax: n <+
+			 {
+			   (n > max) ifTrue: {
+ 				max: n. 
+			   }.
+			 }.
+
+			increasePercent: b <+
+			 { | dist <-> 0. increment <-> 0.|
+			   dist: max - min.
+			   increment: dist * (1.0 + ((b asFloat) / 100.0)).
+			   
+			   min: min - increment.
+			   max: max + increment.
+			 }.
+
+          	|}.
+
+		MinMax <- {| min <-> 9999999.0. max <-> -9999999.0. |}.
+
+		Start: name   <+
+			{ 
+                                MinMaxParent setSlot: 'parent' with: (Traits Clonable ObjectClass).
+                                (Traits Clonable) setSlot: 'MinMaxParent' with: MinMaxParent.
+				(Globals) setSlot: 'MinMax' with: MinMax.
+
+	                        MinMax setSlot: 'parent' with: MinMaxParent.
+			} 
+	|}
+
+|}
+

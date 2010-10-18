@@ -58,6 +58,10 @@ Cel Module - DateTime Object
 					
 				}.
 
+			  print <+ {
+				asString print.
+			  }.
+
 			asDateString <+ { | result <-> 0. |
 
 					result: String clone.

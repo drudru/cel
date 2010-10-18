@@ -4,7 +4,7 @@
 //
 // <See class's '.h' file>
 //
-// $Id: main.c,v 1.30 2002/02/22 22:23:24 dru Exp $
+// $Id: main.c,v 1.31 2002/02/26 01:29:14 dru Exp $
 //
 //
 
@@ -215,7 +215,6 @@ int main (int argc, char *argv[])
     // Setup our virtual CPU
     pcpu = &cpu;
     init(pcpu);
-    reset(pcpu);
 
     // Setup our runtime
     // This sets up the atoms, globals, and internal intrinsics
@@ -295,7 +294,7 @@ int main (int argc, char *argv[])
     
 
     // Run the code straight
-    run (pcpu);
+    VMRun (pcpu, 1);
     
     return 0;
 }

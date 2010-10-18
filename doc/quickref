@@ -1,0 +1,15 @@
+
+
+Ok - I always keep forgetting *BAD SIGN*
+
+What are the parent-local and the code-proto 
+places for on the stack.
+
+The parent local is the stack mapped parent for an activation.
+It gets used rather than the below mentioned code-proto reference
+when a new activation is started. It is the
+true instance being worked on. 
+
+the code proto is for the pushSelf operation. Throughout the
+code timeline, self is required. Therefore, we store this
+in the frame so we can get it when we need it.

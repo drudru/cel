@@ -5,7 +5,7 @@
 // <see corresponding .h file>
 // 
 //
-// $Id: runtime.c,v 1.48 2002/02/22 22:23:24 dru Exp $
+// $Id: runtime.c,v 1.54 2002/03/07 20:02:46 dru Exp $
 //
 //
 
@@ -302,6 +302,7 @@ int celInit (VM32Cpu * cpu)
     objectSetSlot(DefaultBehavior, stringToAtom("hasSlot:"), PROTO_ACTION_INTRINSIC, (uint32) intrinsicHasSlot);
     objectSetSlot(DefaultBehavior, stringToAtom("getSlot:"), PROTO_ACTION_INTRINSIC, (uint32) intrinsicGetSlot);
     objectSetSlot(DefaultBehavior, stringToAtom("removeSlot:"), PROTO_ACTION_INTRINSIC, (uint32) intrinsicRemoveSlot);
+    objectSetSlot(DefaultBehavior, stringToAtom("copySlotsFrom:"), PROTO_ACTION_INTRINSIC, (uint32) intrinsicCopySlotsFrom);
     // *NOTE* Same intrinsic for all of the performs
     objectSetSlot(DefaultBehavior, stringToAtom("perform:"), PROTO_ACTION_INTRINSIC, (uint32) intrinsicPerform);
     objectSetSlot(DefaultBehavior, stringToAtom("perform:with:"), PROTO_ACTION_INTRINSIC, (uint32) intrinsicPerform);
@@ -358,6 +359,7 @@ int celInit (VM32Cpu * cpu)
     objectSetSlot(StringParent, stringToAtom("<"), PROTO_ACTION_INTRINSIC, (uint32) intrinsicStringLess);
     objectSetSlot(StringParent, stringToAtom("<="), PROTO_ACTION_INTRINSIC, (uint32) intrinsicStringLessEqual);
     objectSetSlot(StringParent, stringToAtom("+"), PROTO_ACTION_INTRINSIC, (uint32) intrinsicStringAdd);
+    objectSetSlot(StringParent, stringToAtom("clear"), PROTO_ACTION_INTRINSIC, (uint32) intrinsicStringClear);
     objectSetSlot(StringParent, stringToAtom("at:"), PROTO_ACTION_INTRINSIC, (uint32) intrinsicStringAt);
     objectSetSlot(StringParent, stringToAtom("insert:at:"), PROTO_ACTION_INTRINSIC, (uint32) intrinsicStringInsertAt);
     objectSetSlot(StringParent, stringToAtom("removeAt:"), PROTO_ACTION_INTRINSIC, (uint32) intrinsicStringRemoveAt);
@@ -1482,7 +1484,7 @@ uint32 objectGetSlot (Proto proto, Atom key, Proto * result)
 	switch (k) {
 	    case PROTO_ACTION_PASSTHRU:
 	    case PROTO_ACTION_GET:
-	    case PROTO_ACTION_INTRINSIC:		// This is here for kit imports
+	    case PROTO_ACTION_INTRINSIC:		// This is here for kit imports
 							// Intrinsics have become my way
 							// of storing 32 bits of data
 						        // like C pointers
@@ -1595,7 +1597,7 @@ void * objectPointerValue (Proto proto)
 }
 
 // Return the value of an integer reference
-uint32 objectIntegerValue (Proto proto)
+int objectIntegerValue (Proto proto)
 {
     int i;
     struct _proto      * p1;
@@ -1712,7 +1714,7 @@ void * objectDump (Proto proto)
     switch (i) {
 	case PROTO_REF_INT:
 	    // display the int
-	    sprintf(buff, "(%ld) Integer", objectIntegerValue(proto));
+	    sprintf(buff, "(%d) Integer", objectIntegerValue(proto));
 	    printString(buff);
 	    break;
 	case PROTO_REF_PROTO:
@@ -1805,7 +1807,7 @@ void * objectDump (Proto proto)
 				// Show the For now just say stack
 				tmp = protoSlotData(proto, slotPtr);
 				assert(PROTO_REFTYPE(tmp) == PROTO_REF_INT);
-				sprintf(buff, "FP[0x%lx]", objectIntegerValue(tmp));
+				sprintf(buff, "FP[0x%x]", objectIntegerValue(tmp));
 				printString(buff);
 				break;
 			}
@@ -1865,7 +1867,7 @@ void * objectShallowDump (Proto proto)
     switch (i) {
 	case PROTO_REF_INT:
 	    // display the int
-	    sprintf(buff, "(%ld) Integer", objectIntegerValue(proto));
+	    sprintf(buff, "(%d) Integer", objectIntegerValue(proto));
 	    printString(buff);
 	    break;
 	case PROTO_REF_PROTO:
@@ -1939,7 +1941,7 @@ void * objectShallowDump (Proto proto)
 			    // Show the For now just say stack
 			    data = protoSlotData(proto, slotPtr);
 			    assert(PROTO_REFTYPE(data) == PROTO_REF_INT);
-			    sprintf(buff, "FP[0x%lx]", objectIntegerValue(data));
+			    sprintf(buff, "FP[0x%x]", objectIntegerValue(data));
 			    printString(buff);
 			    break;
 		    }
@@ -2023,14 +2025,12 @@ void showArguments (char * buff)
     
     argCount      =  objectIntegerValue((Proto) stackAt(Cpu, 1));
 
+    if (argCount & 0x80) {
+	argCount = argCount & 0x7f;
+    }
 
     argCount = argCount - 2;
 
-    // DRUDRU - once we fix all of the argCounts, we'll remove this
-    if (argCount < 0) {
-	argCount = 0;
-    }
-    
     assert(argCount >= 0);
     
 
@@ -3051,6 +3051,43 @@ void intrinsicRemoveSlot (void)
 }
 
 
+// Arguments: target 'copySlotsFrom:' proto
+// Return: target
+// Notes:
+// Copies the slots from the proto argument
+
+void intrinsicCopySlotsFrom (void)
+{
+    Proto      proto;
+    Proto      arg;
+    ProtoSlot  slotPtr;
+    
+    int i;
+    
+    
+    proto = (Proto) stackAt(Cpu, 2);
+    arg   = (Proto) stackAt(Cpu, 4);
+
+    proto = objectResolveForwarders(proto);
+    arg   = objectResolveForwarders(arg);
+
+    GCOFF();
+
+    i = 0;
+    while (1) {
+	slotPtr = objectEnumerate(arg, &i, 0);
+	if (slotPtr == nil) {
+	    break;
+	}
+	objectSetSlot(proto, (Atom) slotKey(slotPtr), slotAction(slotPtr), (uint32) protoSlotData(arg, slotPtr));
+    }
+
+    GCON();
+
+    VMReturn(Cpu, (unsigned int) proto, 4);
+}
+
+
 // Arguments: target 'perform:' slotName
 // Return: slot or method's contents
 // Notes:
@@ -3410,7 +3447,7 @@ void intrinsicIntegerPrint(void)
 {
     char buff[8];
 
-    sprintf(buff, "%ld", objectIntegerValue((Proto)stackAt(Cpu,2)) );
+    sprintf(buff, "%d", objectIntegerValue((Proto)stackAt(Cpu,2)) );
     printString(buff);
     VMReturn(Cpu, (unsigned int) stackAt(Cpu, 2), 3);
 }
@@ -4563,6 +4600,21 @@ void intrinsicStringAdd(void)
 }
 
 
+// Arguments: target 'clear' position
+// Return: the cleared string
+// Notes:
+void intrinsicStringClear(void)
+{
+    Proto target;
+    
+    target    = (Proto) stackAt(Cpu,2);
+
+    objectSetSlot(target, ATOMsize, PROTO_ACTION_GET, (uint32) objectNewInteger(0));
+    
+    VMReturn(Cpu, (unsigned int) target, 3);
+
+}
+
 
 // Arguments: target 'at:' position
 // Return: the character literal at that position
@@ -5189,7 +5241,9 @@ void intrinsicStringSplit(void)
 	splitCount ++;
 	
     }
-    addToArray(result, createString(start, size));
+    if (size > 0) {
+	    addToArray(result, createString(start, size));
+    }
     
     GCON();
     
@@ -6613,18 +6667,15 @@ void doCelInit (char * module, VM32Cpu * pcpu, int32 noRun)
 
 
     // Push the parent
-    push(pcpu, (uint32) root); 
+    //push(pcpu, (uint32) root); 
     // Push the code-proto pointer
-    push(pcpu, (uint32) root); 
+    //push(pcpu, (uint32) root); 
     // Push the preserved FP
-    push(pcpu, 0); 
+    //push(pcpu, 0); 
     // Setup the fp
-    pcpu->fp = pcpu->sp;
+    //pcpu->fp = pcpu->sp;
 
-    push(pcpu, (uint32) stringToAtom("_Start"));
-    push(pcpu, (uint32) root);
-    push(pcpu, 0);		// The Argument count
-    push(pcpu, 0);		// The return address
+    VMSetupCall(pcpu, (uint32) root, (uint32) stringToAtom("_Start"));
 
 
     //if (debugTrace) {
@@ -6635,7 +6686,7 @@ void doCelInit (char * module, VM32Cpu * pcpu, int32 noRun)
 
     GCON();
     
-    activateSlot();
+    //activateSlot();
 }
 
 	   

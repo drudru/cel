@@ -1,4 +1,9 @@
 
+Oct. 17, 2010 - Release 0.8.7
+    Cleaned up the release. Removed win32 support.
+    Brought in the old OpenGL support.
+    Brought in other old fixes.
+
 Feb. 24, 2002 - Release 0.8.5
 
     MAJOR FEATURES

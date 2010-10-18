@@ -41,6 +41,8 @@ StackFrame StackFrameNew(VM32Cpu * cpu)
     tmp->codeProto    = (Proto *) 0;
     tmp->numArgs      = StackFrameValue(cpu->sp, 2);
     tmp->numArgs      = objectIntegerValue((Proto)tmp->numArgs);
+    // Do this to get rid of the sentinel
+    tmp->numArgs      = tmp->numArgs & 0x7f;
     tmp->args         = (Proto *)((cpu->sp + 12));
 
     return tmp;
@@ -54,6 +56,8 @@ void StackFrameFree(StackFrame s)
 // Note, some of these aren't locals, they may
 // just be on the stack in preparation for being
 // parameters in another call
+// OR we could be looking at a frame and it was
+// the result of a callback
 
 int StackFrameNext(StackFrame sf)
 {
@@ -86,13 +90,9 @@ int StackFrameNext(StackFrame sf)
     sf->codeProto  = (Proto *) (sf->fp + 8);
     
     sf->numArgs    = StackFrameValue(sf->fp, 5);
-
-    if ((sf->pc == 0) && (sf->numArgs == 0)) {
-	// Detect the bottom-most frame
-	// Short circuit here since objectIntegerValue will fail
-	return 1;
-    }
     sf->numArgs    = objectIntegerValue((Proto)sf->numArgs);
+    // Do this to get rid of the sentinel
+    sf->numArgs    = sf->numArgs & 0x7f;
     sf->args       = (Proto *)((sf->fp + 24));
     
     return 1;

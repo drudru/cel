@@ -166,7 +166,7 @@ void gcInit(void)
     gcBaseSet     = 0;
     gcResidentSet = 0;
     gcRuns        = 0;
-    gcMarkStack   = StackNew(8192); // Depth of 2048
+    gcMarkStack   = StackNew(16384); // Depth of 2048
 
     for (i = 0; i < 256; i++) {
 	Bins[i] = nil;
@@ -469,7 +469,6 @@ void gcFinishBin (CommonBin b)
 
 void gcFree (CommonBin b, int i)
 {
-    void * p;
     int  * ip;
 
     // Free object
@@ -510,10 +509,10 @@ void gcFree (CommonBin b, int i)
 	    // clear the allocation bit
 	    bit_clear(obin->allocBits, i);
 	    
-	    p = &obin->data;
+	    ip = (int *)&obin->data;
 	    // Over bin just contains 4 byte pointers
-	    (char *)p += i << 2;
-	    celfree( p );
+	    ip += i;
+	    celfree( (void *) *ip );
 	}
 	else {
 	    // Can't free already free object

@@ -4,7 +4,7 @@
 // This is the description of the functions for the Stack-VM 32 bit
 // 
 //
-// $Id: svm32.h,v 1.10 2001/11/16 08:19:42 dru Exp $
+// $Id: svm32.h,v 1.12 2002/02/28 19:20:53 dru Exp $
 //
 //
 //
@@ -14,15 +14,8 @@
 #ifndef H_CELSVM32
 #define H_CELSVM32
 
-
-#define CC_CARRY 0x01
-#define CC_ZERO  0x02
-#define CC_SIGN  0x04
-#define CC_OF	 0x08
-
 struct _vm32cpu {
 	unsigned int pc;	/* Program Counter */
-	unsigned int cc;	/* Condition Code */
 	unsigned int sp;	/* Stack Pointer */
 	unsigned int fp;	/* Frame Pointer */
 	unsigned int haltflag;	/* Halt Flag :-) */
@@ -56,8 +49,10 @@ inline unsigned int setFPRelativeAt(unsigned int fp, int pos, unsigned int value
 
 void init (VM32Cpu * cpu);
 
-void reset (VM32Cpu * );
-int run (VM32Cpu * );
+void VMReset (VM32Cpu * );
+void VMRun (VM32Cpu *, unsigned int );
+void VMSetupCall (VM32Cpu * , unsigned int , unsigned int );
+void VMSetupCallWithArgs (VM32Cpu * cpu, unsigned int obj, unsigned int mesg, unsigned int num, unsigned int * pArray);
 int singleStep (VM32Cpu * );
 int halt (VM32Cpu *);
 
